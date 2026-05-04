@@ -1,0 +1,35 @@
+{
+  "name": "@adithya-naik/cmd-tracker",
+  "version": "1.0.0",
+  "description": "📟 A developer tool that auto-captures, categorizes and saves terminal commands per project for easy revision",
+  "main": "src/index.js",
+  "bin": {
+    "tracker": "./bin/tracker.js"
+  },
+  "scripts": {
+    "test": "echo \"No tests yet\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adithya-naik/cmd-tracker.git"
+  },
+  "keywords": [
+    "terminal",
+    "commands",
+    "tracker",
+    "cli",
+    "developer-tool",
+    "learning",
+    "revision"
+  ],
+  "author": "Jatoth Adithya Naik <jatothadithyanaik@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/adithya-naik/cmd-tracker/issues"
+  },
+  "homepage": "https://github.com/adithya-naik/cmd-tracker#readme",
+  "dependencies": {
+    "commander": "^11.0.0",
+    "chalk": "^4.1.2"
+  }
+}
