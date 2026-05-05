@@ -36,6 +36,31 @@ program.description("📟 A developer tool that auto-captures, categorizes and s
  */
 program.version(packageJson.version);
 
+// FIRST COMMAND
+
+/*
+ * .command() → defines a new CLI command
+ * "hello" → this is what user types after tracker
+ * So user runs: tracker hello
+ */
+program
+  .command("hello")
+
+  /*
+   * .description() → explains what this command does
+   * Shows up when user types: tracker --help
+   */
+  .description("A test command to check if CLI is working")
+
+  /*
+   * .action() → this function runs when user types: tracker hello
+   * Whatever code you write inside here — runs when command is called
+   */
+  .action(() => {
+    console.log("👋 Hey! tracker CLI is working perfectly!");
+    console.log("🚀 Let's start tracking your commands!");
+  });
+
 /*
  * This line is VERY important
  * It tells commander to start reading what the user typed
