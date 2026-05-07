@@ -17,6 +17,16 @@ const { program } = require("commander");
 const packageJson = require("../package.json");
 
 /*
+ * Import our init command function
+ * This is the function that runs when user types: tracker init
+ *
+ * We import FROM src/commands/init.js
+ * bin/ → go up one level → ../
+ * then into src/commands/init.js
+ */
+const { initCommand } = require("../src/commands/init");
+
+/*
  * .name() → sets the name of our CLI tool
  * This shows up when user types: tracker --help
  */
@@ -61,10 +71,33 @@ program
     console.log("🚀 Let's start tracking your commands!");
   });
 
+
+  /*
+ * Register the INIT command
+ *
+ * .command("init")  → user types: tracker init
+ * .description()    → shows in tracker --help
+ * .action()         → runs initCommand() when user types tracker init
+ *
+ * initCommand is imported from src/commands/init.js
+ * We just CALL it here — all logic lives in init.js
+ * This keeps bin/tracker.js clean and simple
+ */
+program
+  .command("init")
+  .description("Initialize cmd-tracker in your current project")
+  .action(() => {
+    initCommand();
+  });
+
 /*
  * This line is VERY important
  * It tells commander to start reading what the user typed
  * Without this line - nothing works
- * Always keep this at the BOTTOM of this file
+ * Always keep this at the BOTTOM of this file *
+ * process.argv contains everything user typed:
+ * ["node", "tracker.js", "init"] → runs init command
+ * ["node", "tracker.js", "list"] → runs list command (coming soon)
  */
+
 program.parse(process.argv);
