@@ -7,6 +7,16 @@
  * Think of it like the main gate of our entire application
  */
 
+/*Current commands:
+ * tracker init        → sets up .tracker folder in user's repo
+ * tracker save <cmd>  → saves a command (called by shell hook)
+ *
+ * Coming soon:
+ * tracker list   → show all saved commands
+ * tracker stats  → show command statistics
+ * tracker search → search saved commands
+*/
+
 // Import commander - this package helps us build CLI commands easily
 // Like "list", "stats", "search" etc.
 const { program } = require("commander");
@@ -25,6 +35,13 @@ const packageJson = require("../package.json");
  * then into src/commands/init.js
  */
 const { initCommand } = require("../src/commands/init");
+
+/*
+ * Import our save command function
+ * This runs automatically via shell hook every time
+ * user types a command in terminal
+ */
+const { saveCommandAction } = require("../src/commands/save");
 
 /*
  * .name() → sets the name of our CLI tool
@@ -88,6 +105,30 @@ program
   .description("Initialize cmd-tracker in your current project")
   .action(() => {
     initCommand();
+  });
+
+  /*
+ * Register the SAVE command
+ *
+ * This command is special — users never type it manually
+ * It gets called automatically by the shell hook
+ *
+ * .argument("<command>") → accepts everything after "tracker save"
+ * as a single string argument
+ *
+ * Example:
+ * tracker save git status origin main
+ * → command = "git status origin main"
+ *
+ * "<command>" → angle brackets mean this argument is REQUIRED
+ * "[command]" → square brackets mean OPTIONAL
+ */
+program
+  .command("save")
+  .description("Save a command to tracker (called automatically by shell hook)")
+  .argument("<command>", "the terminal command to save")
+  .action((command) => {
+    saveCommandAction(command);
   });
 
 /*
