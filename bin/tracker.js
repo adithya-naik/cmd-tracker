@@ -44,6 +44,8 @@ const { initCommand } = require("../src/commands/init");
 const { saveCommandAction } = require("../src/commands/save");
 // Import list command function
 const { listCommand } = require("../src/commands/list");
+// Import search command function
+const { searchCommand } = require("../src/commands/search");
 /*
  * .name() → sets the name of our CLI tool
  * This shows up when user types: tracker --help
@@ -148,6 +150,21 @@ program
     listCommand(category);
   });
   
+  /*
+ * Register SEARCH command
+ *
+ * tracker search "git"     → finds commands containing "git"
+ * tracker search "install" → finds commands containing "install"
+ *
+ * <query> → required argument
+ */
+program
+  .command("search")
+  .description("Search through all saved commands")
+  .argument("<query>", "search term to look for in saved commands")
+  .action((query) => {
+    searchCommand(query);
+  });
 /*
  * This line is VERY important
  * It tells commander to start reading what the user typed
