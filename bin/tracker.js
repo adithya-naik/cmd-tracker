@@ -42,7 +42,8 @@ const { initCommand } = require("../src/commands/init");
  * user types a command in terminal
  */
 const { saveCommandAction } = require("../src/commands/save");
-
+// Import list command function
+const { listCommand } = require("../src/commands/list");
 /*
  * .name() → sets the name of our CLI tool
  * This shows up when user types: tracker --help
@@ -131,6 +132,22 @@ program
     saveCommandAction(command);
   });
 
+  /*
+ * Register LIST command
+ *
+ * tracker list          → shows all commands
+ * tracker list git      → shows only git commands
+ *
+ * [category] → square brackets = OPTIONAL argument
+ */
+program
+  .command("list")
+  .description("List all saved commands or filter by category")
+  .argument("[category]", "optional category filter (git/npm/docker/linux/node/angular/python/others)")
+  .action((category) => {
+    listCommand(category);
+  });
+  
 /*
  * This line is VERY important
  * It tells commander to start reading what the user typed
