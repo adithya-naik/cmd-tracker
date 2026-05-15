@@ -87,17 +87,49 @@ function initCommand() {
 function updateGitignore() {
 
   const gitignorePath = path.join(process.cwd(), ".gitignore");
-  const trackerEntry = "\n# cmd-tracker personal data\n.tracker/\n";
+  /*
+   * Added tracker-export files to gitignore too
+   * Users should not push their exported files to GitHub
+   * These are personal revision files — local only
+   */
+  const trackerEntry = "\n# cmd-tracker personal data\n.tracker/\ntracker-export.json\ntracker-export.csv\n";
 
   try {
 
     if (fs.existsSync(gitignorePath)) {
       const gitignoreContent = fs.readFileSync(gitignorePath, "utf-8");
 
-      if (gitignoreContent.includes(".tracker/")) {
-        console.log("✅ .tracker/ already in .gitignore");
+      /*
+       * Check each entry separately
+       * So we can add missing entries without touching existing ones
+       */
+      let entriesToAdd = "";
+
+      if (!gitignoreContent.includes(".tracker/")) {
+        entriesToAdd += ".tracker/\n";
+      }
+
+      if (!gitignoreContent.includes("tracker-export.json")) {
+        entriesToAdd += "tracker-export.json\n";
+      }
+
+      if (!gitignoreContent.includes("tracker-export.csv")) {
+        entriesToAdd += "tracker-export.csv\n";
+      }
+
+      /*
+       * Only write if there's something new to add
+       */
+      if (entriesToAdd === "") {
+        console.log("✅ .gitignore already up to date");
         return;
       }
+
+      fs.appendFileSync(
+        gitignorePath,
+        "\n# cmd-tracker personal data\n" + entriesToAdd
+      );
+      console.log("✅ Updated .gitignore with cmd-tracker entries");
 
       fs.appendFileSync(gitignorePath, trackerEntry);
       console.log("✅ Added .tracker/ to your .gitignore");

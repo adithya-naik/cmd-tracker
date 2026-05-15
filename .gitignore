@@ -148,3 +148,12 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# cmd-tracker personal data
+tracker-export.json
+tracker-export.csv
+
+# cmd-tracker personal data
+.tracker/
+tracker-export.json
+tracker-export.csv
