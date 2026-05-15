@@ -1,156 +1,153 @@
 /*
  * init.js
+ * Now with proper error handling
  *
- * This file handles the "tracker init" command
- * This is the FIRST command a user runs after installing our package
- *
- * What it does:
- * 1. Creates .tracker folder inside user's repo
- * 2. Creates commands.json with empty structure
- * 3. Adds .tracker/ to user's .gitignore automatically
- * 4. Shows clear success/error messages to user
- *
- * User runs: tracker init
- * And everything is set up automatically ✅
+ * Error cases handled:
+ * → Already initialized (runs tracker init twice)
+ * → No write permissions in folder
+ * → Any unexpected file system errors
  */
 
-/*
- * fs and path — built into Node.js, no need to install
- * fs   → read and write files
- * path → build file paths that work on all operating systems
- */
 const fs = require("fs");
 const path = require("path");
-
-/*
- * Import initStorage from our storage utility
- * This function already knows how to create .tracker folder
- * and commands.json — we built it on Day 3!
- *
- * This is why we built utilities separately —
- * we can REUSE them anywhere without rewriting code
- */
 const { initStorage } = require("../utils/storage");
+const { isInitialized } = require("../utils/validator");
 
-/*
- * initCommand() — the main function of this file
- *
- * This function runs when user types: tracker init
- * It sets up everything needed to start tracking commands
- */
 function initCommand() {
 
   console.log("🚀 Initializing cmd-tracker in your project...\n");
 
-  /*
-   * Try-catch block — handles errors gracefully
-   *
-   * try  → attempt to run the code
-   * catch → if anything goes wrong, handle it nicely
-   *         instead of crashing with ugly error messages
-   */
   try {
 
     /*
-     * Step 1 — Initialize .tracker folder and commands.json
-     * We already built this function in storage.js on Day 3!
-     * One line does all the heavy lifting ✅
+     * Check if already initialized
+     * If user runs tracker init twice — warn them
+     * but still continue in case files are corrupted
+     */
+    if (isInitialized()) {
+      console.log("⚠️  cmd-tracker is already initialized in this project!");
+      console.log("💡 Your existing commands are safe");
+      console.log("💡 Running init again will not delete your saved commands\n");
+    }
+
+    /*
+     * Initialize storage — creates .tracker folder
+     * and commands.json if they don't exist
      */
     initStorage();
 
     /*
-     * Step 2 — Add .tracker/ to user's .gitignore
-     * We don't want users accidentally pushing their
-     * personal command history to GitHub
+     * Update .gitignore
      */
     updateGitignore();
 
-    /*
-     * Step 3 — Show success message to user
-     */
     console.log("\n✅ cmd-tracker initialized successfully!");
     console.log("📁 Created .tracker/commands.json in your project");
     console.log("\n🎯 You can now use:");
     console.log("   tracker list     → see all saved commands");
     console.log("   tracker stats    → see command statistics");
     console.log("   tracker search   → search your commands");
+    console.log("   tracker export   → export your commands");
     console.log("\n💡 Start using your terminal normally");
     console.log("   Commands will be saved automatically!\n");
 
   } catch (error) {
 
     /*
-     * If anything goes wrong — show a helpful error message
-     * error.message → gives us what went wrong in plain text
+     * Handle specific error types
+     *
+     * error.code === "EACCES" → permission denied
+     * This happens when user doesn't have write access
+     * to the current folder
      */
-    console.error("❌ Failed to initialize cmd-tracker");
-    console.error("Error:", error.message);
-    console.error("\n💡 Try running with admin/sudo permissions");
-  }
-}
-
-/*
- * updateGitignore() — adds .tracker/ to user's .gitignore
- *
- * Why a separate function?
- * → Keeps initCommand() clean and readable
- * → Single responsibility — one function, one job
- * → Easy to test and debug separately
- */
-function updateGitignore() {
-
-  /*
-   * Build path to .gitignore in user's current directory
-   * process.cwd() → where user ran the tracker init command
-   */
-  const gitignorePath = path.join(process.cwd(), ".gitignore");
-
-  /*
-   * The text we want to add to .gitignore
-   * \n → new line character
-   */
-  const trackerEntry = "\n# cmd-tracker personal data\n.tracker/\n";
-
-  /*
-   * Check if .gitignore exists in user's repo
-   */
-  if (fs.existsSync(gitignorePath)) {
-
-    /*
-     * Read existing .gitignore content
-     */
-    const gitignoreContent = fs.readFileSync(gitignorePath, "utf-8");
-
-    /*
-     * Check if .tracker/ is already in .gitignore
-     * No need to add it twice!
-     */
-    if (gitignoreContent.includes(".tracker/")) {
-      console.log("✅ .tracker/ already in .gitignore");
+    if (error.code === "EACCES") {
+      console.error("❌ Permission denied!");
+      console.error("💡 Try running with admin permissions");
+      console.error("💡 Or check folder write permissions\n");
       return;
     }
 
     /*
-     * .tracker/ not found — append it to existing .gitignore
-     * appendFileSync → adds to END of file without deleting existing content
+     * Handle no space left on disk
      */
-    fs.appendFileSync(gitignorePath, trackerEntry);
-    console.log("✅ Added .tracker/ to your .gitignore");
-
-  } else {
+    if (error.code === "ENOSPC") {
+      console.error("❌ No space left on disk!");
+      console.error("💡 Free up some disk space and try again\n");
+      return;
+    }
 
     /*
-     * .gitignore doesn't exist — create a new one
-     * with just our .tracker/ entry
+     * Any other unexpected error
      */
-    fs.writeFileSync(gitignorePath, trackerEntry);
-    console.log("✅ Created .gitignore with .tracker/ entry");
+    console.error("❌ Failed to initialize cmd-tracker");
+    console.error(`Error: ${error.message}\n`);
   }
 }
 
-/*
- * Export initCommand so bin/tracker.js can use it
- * We only export initCommand — updateGitignore is internal
- * Users of this file only need initCommand
- */
+function updateGitignore() {
+
+  const gitignorePath = path.join(process.cwd(), ".gitignore");
+  /*
+   * Added tracker-export files to gitignore too
+   * Users should not push their exported files to GitHub
+   * These are personal revision files — local only
+   */
+  const trackerEntry = "\n# cmd-tracker personal data\n.tracker/\ntracker-export.json\ntracker-export.csv\n";
+
+  try {
+
+    if (fs.existsSync(gitignorePath)) {
+      const gitignoreContent = fs.readFileSync(gitignorePath, "utf-8");
+
+      /*
+       * Check each entry separately
+       * So we can add missing entries without touching existing ones
+       */
+      let entriesToAdd = "";
+
+      if (!gitignoreContent.includes(".tracker/")) {
+        entriesToAdd += ".tracker/\n";
+      }
+
+      if (!gitignoreContent.includes("tracker-export.json")) {
+        entriesToAdd += "tracker-export.json\n";
+      }
+
+      if (!gitignoreContent.includes("tracker-export.csv")) {
+        entriesToAdd += "tracker-export.csv\n";
+      }
+
+      /*
+       * Only write if there's something new to add
+       */
+      if (entriesToAdd === "") {
+        console.log("✅ .gitignore already up to date");
+        return;
+      }
+
+      fs.appendFileSync(
+        gitignorePath,
+        "\n# cmd-tracker personal data\n" + entriesToAdd
+      );
+      console.log("✅ Updated .gitignore with cmd-tracker entries");
+
+      fs.appendFileSync(gitignorePath, trackerEntry);
+      console.log("✅ Added .tracker/ to your .gitignore");
+
+    } else {
+      fs.writeFileSync(gitignorePath, trackerEntry);
+      console.log("✅ Created .gitignore with .tracker/ entry");
+    }
+
+  } catch (error) {
+
+    /*
+     * .gitignore update failed — not critical
+     * tracker still works, just warn the user
+     */
+    console.log("⚠️  Could not update .gitignore automatically");
+    console.log("💡 Manually add .tracker/ to your .gitignore\n");
+  }
+}
+
 module.exports = { initCommand };

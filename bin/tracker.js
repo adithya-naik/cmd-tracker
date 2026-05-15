@@ -42,7 +42,13 @@ const { initCommand } = require("../src/commands/init");
  * user types a command in terminal
  */
 const { saveCommandAction } = require("../src/commands/save");
-
+// Import list command function
+const { listCommand } = require("../src/commands/list");
+// Import search command function
+const { searchCommand } = require("../src/commands/search");
+const { statsCommand }    = require("../src/commands/stats");
+const { clearCommand }    = require("../src/commands/clear");
+const { exportCommand }   = require("../src/commands/export");
 /*
  * .name() → sets the name of our CLI tool
  * This shows up when user types: tracker --help
@@ -129,6 +135,80 @@ program
   .argument("<command>", "the terminal command to save")
   .action((command) => {
     saveCommandAction(command);
+  });
+
+  /*
+ * Register LIST command
+ *
+ * tracker list          → shows all commands
+ * tracker list git      → shows only git commands
+ *
+ * [category] → square brackets = OPTIONAL argument
+ */
+program
+  .command("list")
+  .description("List all saved commands or filter by category")
+  .argument("[category]", "optional category filter (git/npm/docker/linux/node/angular/python/others)")
+  .action((category) => {
+    listCommand(category);
+  });
+  
+  /*
+ * Register SEARCH command
+ *
+ * tracker search "git"     → finds commands containing "git"
+ * tracker search "install" → finds commands containing "install"
+ *
+ * <query> → required argument
+ */
+program
+  .command("search")
+  .description("Search through all saved commands")
+  .argument("<query>", "search term to look for in saved commands")
+  .action((query) => {
+    searchCommand(query);
+  });
+
+  /*
+ * STATS command
+ * tracker stats → shows category breakdown with percentages
+ */
+program
+  .command("stats")
+  .description("Show statistics of saved commands by category")
+  .action(() => {
+    statsCommand();
+  });
+
+/*
+ * CLEAR command
+ * tracker clear       → clears ALL commands (asks confirmation)
+ * tracker clear git   → clears only git commands (asks confirmation)
+ *
+ * [category] → optional argument
+ */
+program
+  .command("clear")
+  .description("Clear all saved commands or a specific category")
+  .argument("[category]", "optional category to clear")
+  .action((category) => {
+    clearCommand(category);
+  });
+
+/*
+ * EXPORT command
+ * tracker export       → exports as JSON file
+ * tracker export --csv → exports as CSV file
+ *
+ * .option() → adds an optional flag to a command
+ * "--csv" → user types --csv to trigger CSV export
+ */
+program
+  .command("export")
+  .description("Export saved commands as JSON or CSV file")
+  .option("--csv", "export as CSV instead of JSON")
+  .action((options) => {
+    exportCommand(options);
   });
 
 /*
