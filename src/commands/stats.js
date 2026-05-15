@@ -11,10 +11,17 @@
  */
 
 const { readCommands } = require("../utils/storage");
+const { isInitialized, showInitError } = require("../utils/validator");
 
 function statsCommand() {
 
-  const data = readCommands();
+  if (!isInitialized()) {
+    showInitError();
+    return;
+  }
+
+  try {
+    const data = readCommands();
 
   /*
    * Calculate total commands across all categories
@@ -30,17 +37,14 @@ function statsCommand() {
     (sum, commands) => sum + commands.length, 0
   );
 
-  /*
-   * If no commands saved yet — show helpful message
-   */
-  if (total === 0) {
-    console.log("\n📭 No commands saved yet!");
-    console.log("💡 Run: tracker init first\n");
-    return;
-  }
+    if (total === 0) {
+      console.log("\n📭 No commands saved yet!");
+      console.log("💡 Use: tracker save \"your command\"\n");
+      return;
+    }
 
-  console.log("\n📊 CMD-TRACKER — Statistics\n");
-  console.log("─".repeat(50));
+    console.log("\n📊 CMD-TRACKER — Statistics\n");
+    console.log("─".repeat(50));
 
   /*
    * Category icons — same as list.js for consistency
@@ -103,9 +107,14 @@ function statsCommand() {
     }
   }
 
-  console.log("\n" + "─".repeat(50));
-  console.log(`📦 Total commands : ${total}`);
-  console.log(`🏆 Most used      : ${topCategory} (${topCount} commands)\n`);
+    console.log("\n" + "─".repeat(50));
+    console.log(`📦 Total commands : ${total}`);
+    console.log(`🏆 Most used      : ${topCategory} (${topCount} commands)\n`);
+
+  } catch (error) {
+    console.log("\n❌ Error reading statistics");
+    console.log("💡 Try running tracker init again\n");
+  }
 }
 
 module.exports = { statsCommand };

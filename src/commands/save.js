@@ -1,77 +1,50 @@
 /*
  * save.js
+ * Now with proper error handling
  *
- * This file handles the "tracker save" command
+ * Error cases handled:
+ * → tracker not initialized
+ * → empty command
+ * → file write failures
+ * → any unexpected errors
  *
- * How it works:
- * User types any command in terminal → shell hook captures it
- * → calls "tracker save <command>" automatically
- * → this file saves it to .tracker/commands.json
- *
- * User never runs this manually — it runs automatically!
- * That's the magic of our tool 
- *
- * Example automatic call:
- * User types "git status"
- * Shell hook runs "tracker save git status" automatically
+ * Important: ALL errors are silent here
+ * save runs automatically in background
+ * We NEVER want it to interrupt user's workflow
  */
 
-/*
- * Import saveCommand from storage.js
- * This function already handles:
- * → categorization (uses categorizer.js internally)
- * → duplicate detection
- * → timestamp
- * → writing to commands.json
- * We built all of this on Day 3!
- */
 const { saveCommand } = require("../utils/storage");
+const { isInitialized } = require("../utils/validator");
 
-/*
- * saveCommandAction() — runs when tracker save is called
- *
- * @param {string} command — the command to save
- *                           comes from what user typed in terminal
- *
- * Example:
- * tracker save git status
- * → command = "git status"
- */
 function saveCommandAction(command) {
 
   /*
-   * Safety check — if no command provided, exit silently
-   * We use "return" to stop the function immediately
-   *
-   * Why silently?
-   * This command runs automatically in background
-   * We don't want error messages popping up randomly
+   * Safety check — empty command
+   * Return silently — no error message needed
    */
   if (!command || !command.trim()) {
     return;
   }
 
   /*
-   * Try-catch — handle errors gracefully
-   * If saving fails for any reason — fail silently
-   * We never want our tool to interrupt user's workflow
+   * Check if tracker is initialized
+   *
+   * Unlike other commands — we fail SILENTLY here
+   * Because save runs automatically via shell hook
+   * Showing errors every time would be very annoying
+   * for users who haven't run tracker init yet
    */
+  if (!isInitialized()) {
+    return;
+  }
+
   try {
 
-    /*
-     * Call saveCommand from storage.js
-     * It returns an object like:
-     * { saved: true, category: "git" }
-     * { saved: false, reason: "duplicate", category: "git" }
-     */
     const result = saveCommand(command);
 
     /*
-     * Only show output if command was actually saved
-     * Don't show anything for duplicates — keeps terminal clean
-     *
-     * result.saved === true → new command, show confirmation
-     * result.saved === false → duplicate, stay silent
+     * Only show output when command is newly saved
+     * Stay silent for duplicates
      */
     if (result.saved) {
       console.log(`✅ Saved [${result.category}]: ${command}`);
@@ -80,14 +53,11 @@ function saveCommandAction(command) {
   } catch (error) {
 
     /*
-     * If anything goes wrong — fail silently
-     * We never want tracker errors to appear during user's work
+     * Fail completely silently
+     * Never interrupt user's terminal workflow
      */
     return;
   }
 }
 
-/*
- * Export saveCommandAction so bin/tracker.js can use it
- */
 module.exports = { saveCommandAction };

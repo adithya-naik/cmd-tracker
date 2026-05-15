@@ -1,136 +1,92 @@
 /*
  * export.js
- *
- * Handles "tracker export" command
- *
- * tracker export         → exports as JSON (default)
- * tracker export --csv   → exports as CSV file
- *
- * Creates a file in user's current directory:
- * → tracker-export.json
- * → tracker-export.csv
+ * Now with proper error handling using validator.js
  */
 
 const fs = require("fs");
 const path = require("path");
 const { readCommands } = require("../utils/storage");
+const { isInitialized, showInitError } = require("../utils/validator");
 
-/*
- * exportCommand() — main function
- *
- * @param {object} options — contains flags from terminal
- *                           options.csv → true if user passed --csv
- */
 function exportCommand(options) {
 
   /*
-   * Read all saved commands
+   * Check initialization first
    */
-  const data = readCommands();
-
-  /*
-   * Check if any commands exist
-   */
-  const total = Object.values(data).reduce(
-    (sum, commands) => sum + commands.length, 0
-  );
-
-  if (total === 0) {
-    console.log("\n📭 No commands to export yet!\n");
+  if (!isInitialized()) {
+    showInitError();
     return;
   }
 
-  /*
-   * If user passed --csv flag → export as CSV
-   * Otherwise → export as JSON (default)
-   */
-  if (options.csv) {
-    exportAsCSV(data, total);
-  } else {
-    exportAsJSON(data, total);
+  try {
+    const data = readCommands();
+
+    const total = Object.values(data).reduce(
+      (sum, commands) => sum + commands.length, 0
+    );
+
+    if (total === 0) {
+      console.log("\n📭 No commands to export yet!");
+      console.log("💡 Use: tracker save \"your command\"\n");
+      return;
+    }
+
+    if (options.csv) {
+      exportAsCSV(data, total);
+    } else {
+      exportAsJSON(data, total);
+    }
+
+  } catch (error) {
+    console.log("\n❌ Error exporting commands");
+    console.log("💡 Try running tracker init again\n");
   }
 }
 
-/*
- * exportAsJSON() — saves commands as .json file
- *
- * @param {object} data  — all commands object
- * @param {number} total — total command count
- */
 function exportAsJSON(data, total) {
 
-  /*
-   * Build export object with metadata
-   * Good practice — always include when and how many
-   */
-  const exportData = {
-    exportedAt: new Date().toISOString(),
-    totalCommands: total,
-    commands: data
-  };
+  try {
+    const exportData = {
+      exportedAt: new Date().toISOString(),
+      totalCommands: total,
+      commands: data
+    };
 
-  /*
-   * Save in user's current directory
-   * process.cwd() → their project folder
-   */
-  const filePath = path.join(process.cwd(), "tracker-export.json");
+    const filePath = path.join(process.cwd(), "tracker-export.json");
+    fs.writeFileSync(filePath, JSON.stringify(exportData, null, 2));
 
-  /*
-   * JSON.stringify with null, 2 → nicely formatted
-   */
-  fs.writeFileSync(filePath, JSON.stringify(exportData, null, 2));
+    console.log(`\n✅ Exported ${total} commands to tracker-export.json`);
+    console.log(`📁 Location: ${filePath}\n`);
 
-  console.log(`\n✅ Exported ${total} commands to tracker-export.json`);
-  console.log(`📁 Location: ${filePath}\n`);
+  } catch (error) {
+    console.log("\n❌ Error creating JSON file");
+    console.log("💡 Check if you have write permissions in this folder\n");
+  }
 }
 
-/*
- * exportAsCSV() — saves commands as .csv file
- *
- * CSV = Comma Separated Values
- * Opens in Excel, Google Sheets etc.
- *
- * Format:
- * category, command, date
- * git, git status, 5/8/2026
- * npm, npm install, 5/8/2026
- *
- * @param {object} data  — all commands object
- * @param {number} total — total command count
- */
 function exportAsCSV(data, total) {
 
-  /*
-   * Start with header row
-   * Every CSV needs headers as first line
-   */
-  let csvContent = "category,command,date\n";
+  try {
+    let csvContent = "category,command,date\n";
 
-  /*
-   * Loop through each category and command
-   * Build one CSV row per command
-   */
-  for (const [category, commands] of Object.entries(data)) {
-    for (const item of commands) {
-
-      const date = new Date(item.time).toLocaleDateString();
-
-      /*
-       * Wrap command in quotes → handles commas inside commands
-       * Example: git commit -m "first commit"
-       * Without quotes → CSV breaks at the comma
-       * With quotes    → CSV reads it as one value ✅
-       */
-      csvContent += `${category},"${item.command}",${date}\n`;
+    for (const [category, commands] of Object.entries(data)) {
+      for (const item of commands) {
+        const date = new Date(item.time).toLocaleDateString();
+        csvContent += `${category},"${item.command}",${date}\n`;
+      }
     }
+
+    const filePath = path.join(process.cwd(), "tracker-export.csv");
+    fs.writeFileSync(filePath, csvContent);
+
+    console.log(`\n✅ Exported ${total} commands to tracker-export.csv`);
+    console.log(`📁 Location: ${filePath}`);
+    console.log(`💡 Open in Excel or Google Sheets for easy revision!\n`);
+
+  } catch (error) {
+    console.log("\n❌ Error creating CSV file");
+    console.log("💡 Check if you have write permissions in this folder\n");
   }
-
-  const filePath = path.join(process.cwd(), "tracker-export.csv");
-  fs.writeFileSync(filePath, csvContent);
-
-  console.log(`\n✅ Exported ${total} commands to tracker-export.csv`);
-  console.log(`📁 Location: ${filePath}`);
-  console.log(`💡 Open in Excel or Google Sheets for easy revision!\n`);
 }
 
 module.exports = { exportCommand };

@@ -11,6 +11,11 @@
  */
 
 const { readCommands } = require("../utils/storage");
+const {
+  isInitialized,
+  showInitError,
+  isValidQuery
+} = require("../utils/validator");
 
 /*
  * searchCommand() — main function
@@ -21,68 +26,46 @@ const { readCommands } = require("../utils/storage");
 function searchCommand(query) {
 
   /*
-   * Safety check — query must be provided
+   * Check initialization first
    */
-  if (!query || !query.trim()) {
-    console.log("❌ Please provide a search query");
-    console.log("💡 Usage: tracker search \"git\"");
+  if (!isInitialized()) {
+    showInitError();
     return;
   }
 
   /*
-   * Convert to lowercase for case-insensitive search
-   * So "Git" and "git" both match "git status"
+   * Validate query
    */
-  const searchTerm = query.trim().toLowerCase();
+  if (!isValidQuery(query)) {
+    console.log("\n❌ Please provide a search query");
+    console.log("💡 Usage: tracker search \"git\"\n");
+    return;
+  }
 
-  /*
-   * Read all saved commands
-   */
-  const data = readCommands();
+  try {
+    const searchTerm = query.trim().toLowerCase();
+    const data = readCommands();
+    const results = [];
 
-  /*
-   * Store all matching results here
-   * Each result will look like:
-   * { command: "git status", category: "git", time: "..." }
-   */
-  const results = [];
-
-  /*
-   * Loop through every category and every command
-   * Check if command contains the search term
-   */
-  for (const [category, commands] of Object.entries(data)) {
-    for (const item of commands) {
-
-      /*
-       * .toLowerCase().includes() → case insensitive search
-       * "git status".includes("git") → true
-       * "git status".includes("GIT") → false (without toLowerCase)
-       * "git status".toLowerCase().includes("git") → true ✅
-       */
-      if (item.command.toLowerCase().includes(searchTerm)) {
-        results.push({
-          command: item.command,
-          category: category,
-          time: item.time
-        });
+    for (const [category, commands] of Object.entries(data)) {
+      for (const item of commands) {
+        if (item.command.toLowerCase().includes(searchTerm)) {
+          results.push({
+            command: item.command,
+            category: category,
+            time: item.time
+          });
+        }
       }
     }
-  }
 
-  /*
-   * No results found
-   */
-  if (results.length === 0) {
-    console.log(`\n🔍 No commands found for: "${query}"\n`);
-    return;
-  }
+    if (results.length === 0) {
+      console.log(`\n🔍 No commands found for: "${query}"\n`);
+      return;
+    }
 
-  /*
-   * Show results
-   */
-  console.log(`\n🔍 Search results for: "${query}"`);
-  console.log("─".repeat(50));
+    console.log(`\n🔍 Search results for: "${query}"`);
+    console.log("─".repeat(50));
 
   results.forEach((item, index) => {
 
@@ -102,8 +85,13 @@ function searchCommand(query) {
     console.log(`     📁 Category: ${item.category}  📅 ${date}`);
   });
 
-  console.log("\n" + "─".repeat(50));
-  console.log(`✅ Found ${results.length} matching command(s)\n`);
+    console.log("\n" + "─".repeat(50));
+    console.log(`✅ Found ${results.length} matching command(s)\n`);
+
+  } catch (error) {
+    console.log("\n❌ Error searching commands");
+    console.log("💡 Try running tracker init again\n");
+  }
 }
 
 module.exports = { searchCommand };
