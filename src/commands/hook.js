@@ -56,7 +56,13 @@ function hookCommand() {
 
   if (result.success) {
     console.log("\n🎯 Almost done! Run this command to activate:");
-    console.log(`\n   source ${result.configFile}\n`);
+    /*
+     * Always show Unix style path for source command
+     * Even on Windows — Git Bash uses Unix paths
+     * ~/.bashrc works on all systems
+     */
+    const sourceCmd = result.shell === "zsh" ? "~/.zshrc" : "~/.bashrc";
+    console.log(`\n   source ${sourceCmd}\n`);
     console.log("After that — every command you type will be saved automatically! 🚀\n");
   }
 }
@@ -74,7 +80,8 @@ function unhookCommand() {
 
   if (result.success) {
     console.log("\n🎯 Almost done! Run this to apply changes:");
-    console.log(`\n   source ${result.configFile}\n`);
+    const sourceCmd = result.shell === "zsh" ? "~/.zshrc" : "~/.bashrc";
+    console.log(`\n   source ${sourceCmd}\n`);
     console.log("After that — automatic capture will be disabled\n");
   }
 }

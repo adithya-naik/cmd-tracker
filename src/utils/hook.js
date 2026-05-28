@@ -59,25 +59,36 @@ const SHELL_CONFIGS = {
  * If we use backticks → JavaScript tries to read PROMPT_COMMAND as JS variable
  * If we use regular string → it stays as plain text ✅
  */
-const HOOK_SCRIPT = '\n# cmd-tracker shell hook — auto saves every command you type\n' +
-'_cmd_tracker_hook() {\n' +
-'  local LAST_CMD\n' +
-'  LAST_CMD=$(history 1 | sed \'s/^[ ]*[0-9]*[ ]*//)\'  \n' +
-'  if [ -n "$LAST_CMD" ]; then\n' +
-'    tracker save "$LAST_CMD" > /dev/null 2>&1\n' +
-'  fi\n' +
-'}\n' +
-'\n' +
-'# For zsh\n' +
-'if [ -n "$ZSH_VERSION" ]; then\n' +
-'  autoload -U add-zsh-hook\n' +
-'  add-zsh-hook precmd _cmd_tracker_hook\n' +
-'fi\n' +
-'\n' +
-'# For bash\n' +
-'if [ -n "$BASH_VERSION" ]; then\n' +
-'  PROMPT_COMMAND="_cmd_tracker_hook;${PROMPT_COMMAND}"\n' +
-'fi\n';
+/*
+ * HOOK_SCRIPT — shell script added to user's config
+ *
+ * The sed command had escaped quote issues before
+ * Fix: use [[:space:]] instead of [ ] and avoid nested quotes
+ * This is cleaner and works on all bash/zsh versions
+ */
+const HOOK_SCRIPT = [
+  "",
+  "# cmd-tracker shell hook — auto saves every command you type",
+  "_cmd_tracker_hook() {",
+  "  local LAST_CMD",
+  "  LAST_CMD=$(history 1 | sed 's/^[[:space:]]*[0-9]*[[:space:]]*//')",
+  '  if [ -n "$LAST_CMD" ]; then',
+  '    tracker save "$LAST_CMD" > /dev/null 2>&1',
+  "  fi",
+  "}",
+  "",
+  "# For zsh",
+  'if [ -n "$ZSH_VERSION" ]; then',
+  "  autoload -U add-zsh-hook",
+  "  add-zsh-hook precmd _cmd_tracker_hook",
+  "fi",
+  "",
+  "# For bash",
+  'if [ -n "$BASH_VERSION" ]; then',
+  '  PROMPT_COMMAND="_cmd_tracker_hook${PROMPT_COMMAND:+;$PROMPT_COMMAND}"',
+  "fi",
+  ""
+].join("\n");
 
 /*
  * HOOK_MARKER — unique string we add to identify our hook
