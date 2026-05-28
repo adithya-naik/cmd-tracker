@@ -50,7 +50,7 @@ const { statsCommand } = require("../src/commands/stats");
 const { clearCommand } = require("../src/commands/clear");
 const { exportCommand } = require("../src/commands/export");
 const { hookCommand, unhookCommand } = require("../src/commands/hook");
-
+const { favoriteCommand, favoritesCommand } = require("../src/commands/favorite");
 /*
  * .name() → sets the name of our CLI tool
  * This shows up when user types: tracker --help
@@ -233,6 +233,30 @@ program
   .description("Disable automatic command capture")
   .action(() => {
     unhookCommand();
+  });
+
+
+/*
+* FAVORITE command
+* tracker favorite "git status" → toggles favorite
+*/
+program
+  .command("favorite")
+  .description("Toggle a command as favorite")
+  .argument("<command>", "command to mark as favorite")
+  .action((command) => {
+    favoriteCommand(command);
+  });
+
+/*
+ * FAVORITES command
+ * tracker favorites → lists all favorites
+ */
+program
+  .command("favorites")
+  .description("List all favorited commands")
+  .action(() => {
+    favoritesCommand();
   });
 /*
  * This line is VERY important

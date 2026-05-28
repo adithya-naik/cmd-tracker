@@ -199,6 +199,79 @@ function saveCommand(command) {
 }
 
 /*
+ * toggleFavorite() — marks/unmarks a command as favorite
+ *
+ * @param {string} command — the command to favorite
+ * @returns {object} — { success, action: "added"/"removed", command }
+ */
+function toggleFavorite(command) {
+
+  if (!command || !command.trim()) {
+    return { success: false, reason: "empty command" };
+  }
+
+  const cleanCommand = command.trim();
+  const data = readCommands();
+
+  /*
+   * Search for command across all categories
+   */
+  for (const [category, commands] of Object.entries(data)) {
+    const index = commands.findIndex(
+      (item) => item.command === cleanCommand
+    );
+
+    if (index !== -1) {
+      /*
+       * Toggle favorite flag
+       * If favorite exists and is true → set false
+       * If favorite doesn't exist or false → set true
+       */
+      const currentFav = data[category][index].favorite || false;
+      data[category][index].favorite = !currentFav;
+
+      fs.writeFileSync(COMMANDS_FILE, JSON.stringify(data, null, 2));
+
+      return {
+        success: true,
+        action: currentFav ? "removed" : "added",
+        command: cleanCommand,
+        category
+      };
+    }
+  }
+
+  return { success: false, reason: "command not found" };
+}
+
+/*
+ * getFavorites() — returns all favorited commands
+ *
+ * @returns {array} — array of { command, category, time }
+ */
+function getFavorites() {
+
+  const data = readCommands();
+  const favorites = [];
+
+  for (const [category, commands] of Object.entries(data)) {
+    for (const item of commands) {
+      if (item.favorite === true) {
+        favorites.push({
+          command: item.command,
+          category,
+          time: item.time
+        });
+      }
+    }
+  }
+
+  return favorites;
+}
+
+
+
+/*
  * module.exports → expose these functions to other files
  * Only export what other files need to use
  */
@@ -206,6 +279,8 @@ module.exports = {
   initStorage,
   readCommands,
   saveCommand,
+  toggleFavorite,
+  getFavorites,
   TRACKER_DIR,
   COMMANDS_FILE,
 };
