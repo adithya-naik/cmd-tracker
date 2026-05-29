@@ -46,9 +46,11 @@ const { saveCommandAction } = require("../src/commands/save");
 const { listCommand } = require("../src/commands/list");
 // Import search command function
 const { searchCommand } = require("../src/commands/search");
-const { statsCommand }    = require("../src/commands/stats");
-const { clearCommand }    = require("../src/commands/clear");
-const { exportCommand }   = require("../src/commands/export");
+const { statsCommand } = require("../src/commands/stats");
+const { clearCommand } = require("../src/commands/clear");
+const { exportCommand } = require("../src/commands/export");
+const { hookCommand, unhookCommand } = require("../src/commands/hook");
+const { favoriteCommand, favoritesCommand } = require("../src/commands/favorite");
 /*
  * .name() → sets the name of our CLI tool
  * This shows up when user types: tracker --help
@@ -95,17 +97,17 @@ program
   });
 
 
-  /*
- * Register the INIT command
- *
- * .command("init")  → user types: tracker init
- * .description()    → shows in tracker --help
- * .action()         → runs initCommand() when user types tracker init
- *
- * initCommand is imported from src/commands/init.js
- * We just CALL it here — all logic lives in init.js
- * This keeps bin/tracker.js clean and simple
- */
+/*
+* Register the INIT command
+*
+* .command("init")  → user types: tracker init
+* .description()    → shows in tracker --help
+* .action()         → runs initCommand() when user types tracker init
+*
+* initCommand is imported from src/commands/init.js
+* We just CALL it here — all logic lives in init.js
+* This keeps bin/tracker.js clean and simple
+*/
 program
   .command("init")
   .description("Initialize cmd-tracker in your current project")
@@ -113,22 +115,22 @@ program
     initCommand();
   });
 
-  /*
- * Register the SAVE command
- *
- * This command is special — users never type it manually
- * It gets called automatically by the shell hook
- *
- * .argument("<command>") → accepts everything after "tracker save"
- * as a single string argument
- *
- * Example:
- * tracker save git status origin main
- * → command = "git status origin main"
- *
- * "<command>" → angle brackets mean this argument is REQUIRED
- * "[command]" → square brackets mean OPTIONAL
- */
+/*
+* Register the SAVE command
+*
+* This command is special — users never type it manually
+* It gets called automatically by the shell hook
+*
+* .argument("<command>") → accepts everything after "tracker save"
+* as a single string argument
+*
+* Example:
+* tracker save git status origin main
+* → command = "git status origin main"
+*
+* "<command>" → angle brackets mean this argument is REQUIRED
+* "[command]" → square brackets mean OPTIONAL
+*/
 program
   .command("save")
   .description("Save a command to tracker (called automatically by shell hook)")
@@ -137,14 +139,14 @@ program
     saveCommandAction(command);
   });
 
-  /*
- * Register LIST command
- *
- * tracker list          → shows all commands
- * tracker list git      → shows only git commands
- *
- * [category] → square brackets = OPTIONAL argument
- */
+/*
+* Register LIST command
+*
+* tracker list          → shows all commands
+* tracker list git      → shows only git commands
+*
+* [category] → square brackets = OPTIONAL argument
+*/
 program
   .command("list")
   .description("List all saved commands or filter by category")
@@ -152,15 +154,15 @@ program
   .action((category) => {
     listCommand(category);
   });
-  
-  /*
- * Register SEARCH command
- *
- * tracker search "git"     → finds commands containing "git"
- * tracker search "install" → finds commands containing "install"
- *
- * <query> → required argument
- */
+
+/*
+* Register SEARCH command
+*
+* tracker search "git"     → finds commands containing "git"
+* tracker search "install" → finds commands containing "install"
+*
+* <query> → required argument
+*/
 program
   .command("search")
   .description("Search through all saved commands")
@@ -169,10 +171,10 @@ program
     searchCommand(query);
   });
 
-  /*
- * STATS command
- * tracker stats → shows category breakdown with percentages
- */
+/*
+* STATS command
+* tracker stats → shows category breakdown with percentages
+*/
 program
   .command("stats")
   .description("Show statistics of saved commands by category")
@@ -211,6 +213,51 @@ program
     exportCommand(options);
   });
 
+/*
+* HOOK command
+* tracker hook → installs shell hook for auto capture
+*/
+program
+  .command("hook")
+  .description("Enable automatic command capture via shell hook")
+  .action(() => {
+    hookCommand();
+  });
+
+/*
+ * UNHOOK command
+ * tracker unhook → removes shell hook
+ */
+program
+  .command("unhook")
+  .description("Disable automatic command capture")
+  .action(() => {
+    unhookCommand();
+  });
+
+
+/*
+* FAVORITE command
+* tracker favorite "git status" → toggles favorite
+*/
+program
+  .command("favorite")
+  .description("Toggle a command as favorite")
+  .argument("<command>", "command to mark as favorite")
+  .action((command) => {
+    favoriteCommand(command);
+  });
+
+/*
+ * FAVORITES command
+ * tracker favorites → lists all favorites
+ */
+program
+  .command("favorites")
+  .description("List all favorited commands")
+  .action(() => {
+    favoritesCommand();
+  });
 /*
  * This line is VERY important
  * It tells commander to start reading what the user typed
