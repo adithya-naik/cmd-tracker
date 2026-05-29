@@ -1,0 +1,20 @@
+# Development files — not needed in published package
+.tracker/
+tracker-export.json
+tracker-export.csv
+
+# Git files
+.git/
+.gitignore
+
+# Editor files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files
+*.test.js
+*.spec.js
