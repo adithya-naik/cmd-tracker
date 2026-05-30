@@ -61,7 +61,11 @@ function hookCommand() {
      * Even on Windows — Git Bash uses Unix paths
      * ~/.bashrc works on all systems
      */
-    const sourceCmd = result.shell === "zsh" ? "~/.zshrc" : "~/.bashrc";
+     const sourceCmd = {
+        zsh: "~/.zshrc",
+        bash: "~/.bashrc",
+        fish: "~/.config/fish/config.fish",
+        }[result.shell];
     console.log(`\n   source ${sourceCmd}\n`);
     console.log("After that — every command you type will be saved automatically! 🚀\n");
   }
@@ -78,12 +82,16 @@ function unhookCommand() {
   const result = removeHook();
   console.log(result.message);
 
-  if (result.success) {
-    console.log("\n🎯 Almost done! Run this to apply changes:");
-    const sourceCmd = result.shell === "zsh" ? "~/.zshrc" : "~/.bashrc";
-    console.log(`\n   source ${sourceCmd}\n`);
-    console.log("After that — automatic capture will be disabled\n");
-  }
+    if (result.success) {
+        console.log("\n🎯 Almost done! Run this to apply changes:");
+        const sourceCmd = {
+            zsh: "~/.zshrc",
+            bash: "~/.bashrc",
+            fish: "~/.config/fish/config.fish",
+        }[result.shell];
+        console.log(`\n   source ${sourceCmd}\n`);
+        console.log("After that — automatic capture will be disabled\n");
+    }
 }
 
 module.exports = { hookCommand, unhookCommand };
