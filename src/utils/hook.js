@@ -35,7 +35,9 @@ const HOME_DIR = os.homedir();
  */
 const SHELL_CONFIGS = {
   bash: path.join(HOME_DIR, ".bashrc"),
-  zsh: path.join(HOME_DIR, ".zshrc")
+  zsh: path.join(HOME_DIR, ".zshrc"),
+  fish: path.join(HOME_DIR, ".config/fish/config.fish"),
+
 };
 
 /*
@@ -90,6 +92,21 @@ const HOOK_SCRIPT = [
   ""
 ].join("\n");
 
+
+const FISH_HOOK_SCRIPT = [
+    "",
+    "# cmd-tracker shell hook — auto saves every command you type",
+    "function __cmd_tracker_postexec --on-event fish_postexec",
+    "    set -l last_cmd (history --max=1)",
+    "",
+    '    if test -n "$last_cmd"',
+    '        tracker save "$last_cmd" >/dev/null 2>&1',
+    "    end",
+    "end",
+    "",
+].join("\n");
+
+
 /*
  * HOOK_MARKER — unique string we add to identify our hook
  * We use this to:
@@ -105,15 +122,15 @@ const HOOK_MARKER = "# cmd-tracker shell hook — auto saves every command you t
  * Example:
  * "/bin/bash" → bash
  * "/bin/zsh"  → zsh
- *
- * @returns {string} — "bash", "zsh", or "unknown"
+ * "/bin/fish" → fish
+ * @returns {string} — "bash", "zsh", "fish", or "unknown"
  */
 function detectShell() {
   const shell = process.env.SHELL || "";
 
   if (shell.includes("zsh")) return "zsh";
   if (shell.includes("bash")) return "bash";
-
+  if (shell.includes("fish")) return "fish";
   /*
    * On Windows — check SHELL or ComSpec
    * Most Windows users use bash via Git Bash
@@ -176,7 +193,17 @@ function installHook() {
      * Append hook script to shell config file
      * appendFileSync → adds to end without deleting existing content
      */
-    fs.appendFileSync(configFile, HOOK_SCRIPT);
+        if (shell === "fish") {
+            fs.mkdirSync(path.dirname(configFile), { recursive: true });
+        }
+
+        /*
+         * Choose correct hook
+         */
+        const hookScript =
+            shell === "fish" ? FISH_HOOK_SCRIPT : HOOK_SCRIPT;
+
+        fs.appendFileSync(configFile, hookScript);
 
     return {
       success: true,
