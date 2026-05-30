@@ -30,7 +30,7 @@ const COMMANDS_FILE = path.join(TRACKER_DIR, "commands.json");
  * @returns {boolean} — true if initialized, false if not
  */
 function isInitialized() {
-  return fs.existsSync(TRACKER_DIR) && fs.existsSync(COMMANDS_FILE);
+    return fs.existsSync(TRACKER_DIR) && fs.existsSync(COMMANDS_FILE);
 }
 
 /*
@@ -40,8 +40,8 @@ function isInitialized() {
  * telling them exactly what to do next
  */
 function showInitError() {
-  console.log("\n❌ cmd-tracker is not initialized in this project!");
-  console.log("💡 Run this first: tracker init\n");
+    console.log("\n❌ cmd-tracker is not initialized in this project!");
+    console.log("💡 Run this first: tracker init\n");
 }
 
 /*
@@ -51,11 +51,27 @@ function showInitError() {
  * @returns {boolean} — true if valid, false if not
  */
 function isValidCategory(category) {
-  const validCategories = [
-    "git", "npm", "docker", "linux",
-    "node", "angular", "python", "others"
-  ];
-  return validCategories.includes(category.toLowerCase());
+    const validCategories = [
+        "git",
+        "npm",
+        "docker",
+        "linux",
+        "node",
+        "angular",
+        "python",
+        "go",
+        "java",
+        "rust",
+        "dotnet",
+        "kubernetes",
+        "database",
+        "cloud",
+        "packageManagers",
+        "testing",
+        "ai",
+        "others"
+    ];
+    return validCategories.includes(category.toLowerCase());
 }
 
 /*
@@ -64,8 +80,8 @@ function isValidCategory(category) {
  * @param {string} category — the invalid category user typed
  */
 function showCategoryError(category) {
-  console.log(`\n❌ Unknown category: "${category}"`);
-  console.log("📋 Valid categories: git, npm, docker, linux, node, angular, python, others\n");
+    console.log(`\n❌ Unknown category: "${category}"`);
+    console.log("📋 Valid categories: git, npm, docker, linux, node, angular, python, go, java, rust, dotnet, kubernetes, database, cloud, packageManagers, testing, ai, others\n");
 }
 
 /*
@@ -75,10 +91,10 @@ function showCategoryError(category) {
  * @returns {boolean} — true if valid, false if not
  */
 function isValidQuery(query) {
-  /*
-   * Query must exist and have at least 1 character after trimming
-   */
-  return query && query.trim().length > 0;
+    /*
+     * Query must exist and have at least 1 character after trimming
+     */
+    return query && query.trim().length > 0;
 }
 
 /*
@@ -86,9 +102,9 @@ function isValidQuery(query) {
  * Every command file will import what it needs from here
  */
 module.exports = {
-  isInitialized,
-  showInitError,
-  isValidCategory,
-  showCategoryError,
-  isValidQuery
+    isInitialized,
+    showInitError,
+    isValidCategory,
+    showCategoryError,
+    isValidQuery
 };

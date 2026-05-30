@@ -48,16 +48,26 @@ const COMMANDS_FILE = path.join(TRACKER_DIR, "commands.json");
  * not the same object reused (important in JavaScript)
  */
 function getDefaultStructure() {
-  return {
-    git: [],
-    npm: [],
-    docker: [],
-    linux: [],
-    node: [],
-    angular: [],
-    python: [],
-    others: [],
-  };
+    return {
+        git: [],
+        npm: [],
+        docker: [],
+        linux: [],
+        node: [],
+        angular: [],
+        python: [],
+        go: [],
+        java: [],
+        rust: [],
+        dotnet: [],
+        kubernetes: [],
+        database: [],
+        cloud: [],
+        packageManagers: [],
+        testing: [],
+        ai: [],
+        others: [],
+    };
 }
 
 /*
@@ -68,39 +78,39 @@ function getDefaultStructure() {
  */
 function initStorage() {
 
-  /*
-   * fs.existsSync() → checks if a folder/file EXISTS
-   * Returns true if exists, false if not
-   *
-   * If .tracker folder doesn't exist → create it
-   */
-  if (!fs.existsSync(TRACKER_DIR)) {
+    /*
+     * fs.existsSync() → checks if a folder/file EXISTS
+     * Returns true if exists, false if not
+     *
+     * If .tracker folder doesn't exist → create it
+     */
+    if (!fs.existsSync(TRACKER_DIR)) {
+
+        /*
+         * fs.mkdirSync() → creates a folder
+         * { recursive: true } → creates parent folders too if needed
+         * Like "mkdir -p" in linux
+         */
+        fs.mkdirSync(TRACKER_DIR, { recursive: true });
+        console.log("✅ Created .tracker folder");
+    }
 
     /*
-     * fs.mkdirSync() → creates a folder
-     * { recursive: true } → creates parent folders too if needed
-     * Like "mkdir -p" in linux
+     * If commands.json doesn't exist → create it with default structure
      */
-    fs.mkdirSync(TRACKER_DIR, { recursive: true });
-    console.log("✅ Created .tracker folder");
-  }
+    if (!fs.existsSync(COMMANDS_FILE)) {
 
-  /*
-   * If commands.json doesn't exist → create it with default structure
-   */
-  if (!fs.existsSync(COMMANDS_FILE)) {
-
-    /*
-     * fs.writeFileSync() → creates and writes to a file
-     * JSON.stringify() → converts JavaScript object to JSON string
-     * null, 2 → makes the JSON nicely formatted with 2 spaces indent
-     */
-    fs.writeFileSync(
-      COMMANDS_FILE,
-      JSON.stringify(getDefaultStructure(), null, 2)
-    );
-    console.log("✅ Created .tracker/commands.json");
-  }
+        /*
+         * fs.writeFileSync() → creates and writes to a file
+         * JSON.stringify() → converts JavaScript object to JSON string
+         * null, 2 → makes the JSON nicely formatted with 2 spaces indent
+         */
+        fs.writeFileSync(
+            COMMANDS_FILE,
+            JSON.stringify(getDefaultStructure(), null, 2)
+        );
+        console.log("✅ Created .tracker/commands.json");
+    }
 }
 
 /*
@@ -110,20 +120,20 @@ function initStorage() {
  */
 function readCommands() {
 
-  /*
-   * If file doesn't exist yet — return empty structure
-   * This prevents crashes if someone runs tracker list before tracker init
-   */
-  if (!fs.existsSync(COMMANDS_FILE)) {
-    return getDefaultStructure();
-  }
+    /*
+     * If file doesn't exist yet — return empty structure
+     * This prevents crashes if someone runs tracker list before tracker init
+     */
+    if (!fs.existsSync(COMMANDS_FILE)) {
+        return getDefaultStructure();
+    }
 
-  /*
-   * fs.readFileSync() → reads the file content as text
-   * JSON.parse() → converts JSON text back to JavaScript object
-   */
-  const fileContent = fs.readFileSync(COMMANDS_FILE, "utf-8");
-  return JSON.parse(fileContent);
+    /*
+     * fs.readFileSync() → reads the file content as text
+     * JSON.parse() → converts JSON text back to JavaScript object
+     */
+    const fileContent = fs.readFileSync(COMMANDS_FILE, "utf-8");
+    return JSON.parse(fileContent);
 }
 
 /*
@@ -134,68 +144,76 @@ function readCommands() {
  */
 function saveCommand(command) {
 
-  /*
-   * Safety check — don't save empty commands
-   */
-  if (!command || !command.trim()) {
-    return { saved: false, reason: "empty command" };
-  }
+    /*
+     * Safety check — don't save empty commands
+     */
+    if (!command || !command.trim()) {
+        return { saved: false, reason: "empty command" };
+    }
 
-  /*
-   * Clean the command — remove extra spaces
-   */
-  const cleanCommand = command.trim();
+    /*
+     * Clean the command — remove extra spaces
+     */
+    const cleanCommand = command.trim();
 
-  /*
-   * Use our categorizer to find which category this command belongs to
-   */
-  const category = categorize(cleanCommand);
+    /*
+     * Use our categorizer to find which category this command belongs to
+     */
+    const category = categorize(cleanCommand);
 
-  /*
-   * Read existing commands from file
-   */
-  const data = readCommands();
+    /*
+     * Read existing commands from file
+     */
+    const data = readCommands();
 
-  /*
-   * DUPLICATE CHECK
-   *
-   * .some() → loops through array and returns true if ANY item matches
-   *
-   * We check if this exact command already exists in this category
-   * If it does — don't save it again
-   *
-   * item.command → because each saved command is an object like:
-   * { command: "git status", time: "2026-05-06T..." }
-   */
-  const isDuplicate = data[category].some(
-    (item) => item.command === cleanCommand
-  );
+    /*
+     * Handle old commands.json files that don't have the new category key yet
+     * If data[category] doesn't exist → initialize it as empty array
+     */
+    if (!data[category]) {
+        data[category] = [];
+    }
 
-  if (isDuplicate) {
-    return { saved: false, reason: "duplicate", category };
-  }
+    /*
+     * DUPLICATE CHECK
+     *
+     * .some() → loops through array and returns true if ANY item matches
+     *
+     * We check if this exact command already exists in this category
+     * If it does — don't save it again
+     *
+     * item.command → because each saved command is an object like:
+     * { command: "git status", time: "2026-05-06T..." }
+     */
+    const isDuplicate = data[category].some(
+        (item) => item.command === cleanCommand
+    );
 
-  /*
-   * Create the command object with timestamp
-   * new Date().toISOString() → "2026-05-06T10:30:00.000Z"
-   * This gives us a full date+time in standard format
-   */
-  const commandObject = {
-    command: cleanCommand,
-    time: new Date().toISOString(),
-  };
+    if (isDuplicate) {
+        return { saved: false, reason: "duplicate", category };
+    }
 
-  /*
-   * Push the new command into the correct category array
-   */
-  data[category].push(commandObject);
+    /*
+     * Create the command object with timestamp
+     * new Date().toISOString() → "2026-05-06T10:30:00.000Z"
+     * This gives us a full date+time in standard format
+     */
+    const commandObject = {
+        command: cleanCommand,
+        time: new Date().toISOString(),
+    };
 
-  /*
-   * Write the updated data back to commands.json
-   */
-  fs.writeFileSync(COMMANDS_FILE, JSON.stringify(data, null, 2));
+    /*
+     * Push the new command into the correct category array
+     */
+    data[category].push(commandObject);
 
-  return { saved: true, category };
+    /*
+     * Write the updated data back to commands.json
+     */
+    fs.writeFileSync(COMMANDS_FILE, JSON.stringify(data, null, 2));
+
+    return { saved: true, category };
 }
 
 /*
@@ -206,42 +224,42 @@ function saveCommand(command) {
  */
 function toggleFavorite(command) {
 
-  if (!command || !command.trim()) {
-    return { success: false, reason: "empty command" };
-  }
-
-  const cleanCommand = command.trim();
-  const data = readCommands();
-
-  /*
-   * Search for command across all categories
-   */
-  for (const [category, commands] of Object.entries(data)) {
-    const index = commands.findIndex(
-      (item) => item.command === cleanCommand
-    );
-
-    if (index !== -1) {
-      /*
-       * Toggle favorite flag
-       * If favorite exists and is true → set false
-       * If favorite doesn't exist or false → set true
-       */
-      const currentFav = data[category][index].favorite || false;
-      data[category][index].favorite = !currentFav;
-
-      fs.writeFileSync(COMMANDS_FILE, JSON.stringify(data, null, 2));
-
-      return {
-        success: true,
-        action: currentFav ? "removed" : "added",
-        command: cleanCommand,
-        category
-      };
+    if (!command || !command.trim()) {
+        return { success: false, reason: "empty command" };
     }
-  }
 
-  return { success: false, reason: "command not found" };
+    const cleanCommand = command.trim();
+    const data = readCommands();
+
+    /*
+     * Search for command across all categories
+     */
+    for (const [category, commands] of Object.entries(data)) {
+        const index = commands.findIndex(
+            (item) => item.command === cleanCommand
+        );
+
+        if (index !== -1) {
+            /*
+             * Toggle favorite flag
+             * If favorite exists and is true → set false
+             * If favorite doesn't exist or false → set true
+             */
+            const currentFav = data[category][index].favorite || false;
+            data[category][index].favorite = !currentFav;
+
+            fs.writeFileSync(COMMANDS_FILE, JSON.stringify(data, null, 2));
+
+            return {
+                success: true,
+                action: currentFav ? "removed" : "added",
+                command: cleanCommand,
+                category
+            };
+        }
+    }
+
+    return { success: false, reason: "command not found" };
 }
 
 /*
@@ -251,22 +269,22 @@ function toggleFavorite(command) {
  */
 function getFavorites() {
 
-  const data = readCommands();
-  const favorites = [];
+    const data = readCommands();
+    const favorites = [];
 
-  for (const [category, commands] of Object.entries(data)) {
-    for (const item of commands) {
-      if (item.favorite === true) {
-        favorites.push({
-          command: item.command,
-          category,
-          time: item.time
-        });
-      }
+    for (const [category, commands] of Object.entries(data)) {
+        for (const item of commands) {
+            if (item.favorite === true) {
+                favorites.push({
+                    command: item.command,
+                    category,
+                    time: item.time
+                });
+            }
+        }
     }
-  }
 
-  return favorites;
+    return favorites;
 }
 
 
@@ -276,11 +294,11 @@ function getFavorites() {
  * Only export what other files need to use
  */
 module.exports = {
-  initStorage,
-  readCommands,
-  saveCommand,
-  toggleFavorite,
-  getFavorites,
-  TRACKER_DIR,
-  COMMANDS_FILE,
+    initStorage,
+    readCommands,
+    saveCommand,
+    toggleFavorite,
+    getFavorites,
+    TRACKER_DIR,
+    COMMANDS_FILE,
 };
