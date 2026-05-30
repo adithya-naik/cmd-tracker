@@ -11,14 +11,14 @@
  *        Mac/Linux: /home/user/project/.tracker/commands.json
  *        path module handles this difference automatically
  */
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
 
 /*
  * Import our categorize function from categorizer.js
  * We need it here to know WHICH category to save the command in
  */
-const { categorize } = require("./categorizer");
+import { categorize } from "./categorizer.js";
 
 /*
  * process.cwd() → Current Working Directory
@@ -293,7 +293,7 @@ function getFavorites() {
  * module.exports → expose these functions to other files
  * Only export what other files need to use
  */
-module.exports = {
+export {
     initStorage,
     readCommands,
     saveCommand,

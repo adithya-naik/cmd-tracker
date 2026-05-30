@@ -17,9 +17,9 @@
  * 4. User sources their config → automatic capture starts!
  */
 
-const fs = require("fs");
-const path = require("path");
-const os = require("os");
+import fs from "fs";
+import path from "path";
+import os from "os";
 
 /*
  * os module — built into Node.js
@@ -305,7 +305,7 @@ function isHookInstalled() {
     }
 }
 
-module.exports = {
+export {
     installHook,
     removeHook,
     isHookInstalled,

@@ -7,14 +7,14 @@
  * tracker unhook → removes shell hook
  */
 
-const {
+import {
     installHook,
     removeHook,
     isHookInstalled,
     detectShell
-} = require("../utils/hook");
+} from "../utils/hook.js";
 
-const { isInitialized, showInitError } = require("../utils/validator");
+import { isInitialized, showInitError } from "../utils/validator.js";
 
 /*
  * hookCommand() — runs when user types: tracker hook
@@ -96,4 +96,4 @@ function unhookCommand() {
     }
 }
 
-module.exports = { hookCommand, unhookCommand };
+export { hookCommand, unhookCommand };

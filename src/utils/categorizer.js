@@ -258,4 +258,4 @@ function categorize(command) {
  *
  * This is how Node.js shares code between files
  */
-module.exports = { categorize };
+export { categorize };

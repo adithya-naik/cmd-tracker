@@ -10,8 +10,8 @@
  * Write once, use everywhere ✅
  */
 
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
+import path from "path";
 
 /*
  * Path to .tracker folder
@@ -101,7 +101,7 @@ function isValidQuery(query) {
  * Export all validators
  * Every command file will import what it needs from here
  */
-module.exports = {
+export {
     isInitialized,
     showInitError,
     isValidCategory,

@@ -8,10 +8,10 @@
  * → Any unexpected file system errors
  */
 
-const fs = require("fs");
-const path = require("path");
-const { initStorage } = require("../utils/storage");
-const { isInitialized } = require("../utils/validator");
+import fs from "fs";
+import path from "path";
+import { initStorage } from "../utils/storage.js";
+import { isInitialized } from "../utils/validator.js";
 
 function initCommand() {
 
@@ -150,4 +150,4 @@ function updateGitignore() {
   }
 }
 
-module.exports = { initCommand };
+export { initCommand };

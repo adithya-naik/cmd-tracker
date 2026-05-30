@@ -5,13 +5,13 @@
  * Now with proper error handling using validator.js
  */
 
-const { readCommands } = require("../utils/storage");
-const {
+import { readCommands } from "../utils/storage.js";
+import {
     isInitialized,
     showInitError,
     isValidCategory,
     showCategoryError
-} = require("../utils/validator");
+} from "../utils/validator.js";
 
 function listCommand(category) {
 
@@ -114,4 +114,4 @@ function displayCategory(categoryName, commands) {
     });
 }
 
-module.exports = { listCommand };
+export { listCommand };

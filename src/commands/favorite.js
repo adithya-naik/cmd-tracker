@@ -9,8 +9,8 @@
  * in commands.json
  */
 
-const { toggleFavorite, getFavorites } = require("../utils/storage");
-const { isInitialized, showInitError } = require("../utils/validator");
+import { toggleFavorite, getFavorites } from "../utils/storage.js";
+import { isInitialized, showInitError } from "../utils/validator.js";
 
 /*
  * favoriteCommand() — toggles favorite on a specific command
@@ -92,4 +92,4 @@ function favoritesCommand() {
   }
 }
 
-module.exports = { favoriteCommand, favoritesCommand };
+export { favoriteCommand, favoritesCommand };

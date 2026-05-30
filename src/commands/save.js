@@ -13,8 +13,8 @@
  * We NEVER want it to interrupt user's workflow
  */
 
-const { saveCommand } = require("../utils/storage");
-const { isInitialized } = require("../utils/validator");
+import { saveCommand } from "../utils/storage.js";
+import { isInitialized } from "../utils/validator.js";
 
 function saveCommandAction(command) {
 
@@ -60,4 +60,4 @@ function saveCommandAction(command) {
   }
 }
 
-module.exports = { saveCommandAction };
+export { saveCommandAction };

@@ -17,40 +17,20 @@
  * tracker search → search saved commands
 */
 
-// Import commander - this package helps us build CLI commands easily
-// Like "list", "stats", "search" etc.
-const { program } = require("commander");
-
-// Import package.json to read our version number
-// __dirname = current folder path (bin/)
-// ../ = go one level up (to root of project)
+import { program } from "commander";
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
 const packageJson = require("../package.json");
 
-/*
- * Import our init command function
- * This is the function that runs when user types: tracker init
- *
- * We import FROM src/commands/init.js
- * bin/ → go up one level → ../
- * then into src/commands/init.js
- */
-const { initCommand } = require("../src/commands/init");
-
-/*
- * Import our save command function
- * This runs automatically via shell hook every time
- * user types a command in terminal
- */
-const { saveCommandAction } = require("../src/commands/save");
-// Import list command function
-const { listCommand } = require("../src/commands/list");
-// Import search command function
-const { searchCommand } = require("../src/commands/search");
-const { statsCommand } = require("../src/commands/stats");
-const { clearCommand } = require("../src/commands/clear");
-const { exportCommand } = require("../src/commands/export");
-const { hookCommand, unhookCommand } = require("../src/commands/hook");
-const { favoriteCommand, favoritesCommand } = require("../src/commands/favorite");
+import { initCommand } from "../src/commands/init.js";
+import { saveCommandAction } from "../src/commands/save.js";
+import { listCommand } from "../src/commands/list.js";
+import { searchCommand } from "../src/commands/search.js";
+import { statsCommand } from "../src/commands/stats.js";
+import { clearCommand } from "../src/commands/clear.js";
+import { exportCommand } from "../src/commands/export.js";
+import { hookCommand, unhookCommand } from "../src/commands/hook.js";
+import { favoriteCommand, favoritesCommand } from "../src/commands/favorite.js";
 /*
  * .name() → sets the name of our CLI tool
  * This shows up when user types: tracker --help

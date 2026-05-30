@@ -10,8 +10,8 @@
  * → Most used category
  */
 
-const { readCommands } = require("../utils/storage");
-const { isInitialized, showInitError } = require("../utils/validator");
+import { readCommands } from "../utils/storage.js";
+import { isInitialized, showInitError } from "../utils/validator.js";
 
 function statsCommand() {
 
@@ -117,4 +117,4 @@ function statsCommand() {
   }
 }
 
-module.exports = { statsCommand };
+export { statsCommand };
