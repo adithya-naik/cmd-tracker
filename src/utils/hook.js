@@ -8,10 +8,10 @@
  * Supported shells:
  * → bash → hooks into ~/.bashrc
  * → zsh  → hooks into ~/.zshrc
- * → Both are most common shells on Mac/Linux
+ * → fish → hooks into ~/.config/fish/config.fish
  *
  * How it works:
- * 1. Detect user's shell (bash or zsh)
+ * 1. Detect user's shell (bash, zsh, or fish)
  * 2. Add a hook script to their shell config file
  * 3. Hook script calls "tracker save <command>" after every command
  * 4. User sources their config → automatic capture starts!
@@ -118,15 +118,19 @@ const HOOK_MARKER = "# cmd-tracker shell hook — auto saves every command you t
 /*
  * detectShell() — detects which shell user is running
  *
- * process.env.SHELL → environment variable containing shell path
- * Example:
- * "/bin/bash" → bash
- * "/bin/zsh"  → zsh
- * "/bin/fish" → fish
+ * Priority:
+ * 1. process.env.FISH_VERSION — fish sets this automatically
+ *    even when launched from another shell (parent $SHELL
+ *    would still show bash/zsh)
+ * 2. process.env.SHELL — the standard shell path variable
+ *    Examples: "/bin/bash" → bash, "/bin/zsh" → zsh
+ *
  * @returns {string} — "bash", "zsh", "fish", or "unknown"
  */
 function detectShell() {
-  const shell = process.env.SHELL || "";
+    if (process.env.FISH_VERSION) return "fish";
+
+    const shell = process.env.SHELL || "";
 
   if (shell.includes("zsh")) return "zsh";
   if (shell.includes("bash")) return "bash";
