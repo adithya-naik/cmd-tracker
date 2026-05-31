@@ -1,6 +1,6 @@
 /*
  * categorizer.js
- * 
+ *
  * This file has ONE job — look at a command and decide its category
  * Example:
  *   "git status"      → "git"
@@ -13,7 +13,7 @@
 /*
  * We define all our categories and their keywords here
  * This is called a CONFIGURATION OBJECT
- * 
+ *
  * Why keep it here separately?
  * → Easy to add new categories later
  * → Easy to add new keywords to existing categories
@@ -87,13 +87,13 @@ const CATEGORIES = {
 
 /*
  * categorize() — the main function of this file
- * 
+ *
  * It takes a command string as input
  * It returns the category name as a string
- * 
+ *
  * @param {string} command - the terminal command typed by user
  * @returns {string} - category name (git/npm/docker/linux/node/angular/python/others)
- * 
+ *
  * Example:
  *   categorize("git status")  → "git"
  *   categorize("npm install") → "npm"
@@ -114,7 +114,7 @@ function categorize(command) {
    * .trim() → removes spaces from start and end
    * .toLowerCase() → converts to lowercase so "Git Status" = "git status"
    * .split(" ")[0] → takes only the FIRST word
-   * 
+   *
    * Example:
    *   "  git status  " → trim → "git status"
    *                    → toLowerCase → "git status"
@@ -130,14 +130,14 @@ function categorize(command) {
    *   ["npm", ["npm", "npx"]],
    *   ...
    * ]
-   * 
+   *
    * We loop through each [categoryName, keywords] pair
    */
   for (const [categoryName, keywords] of Object.entries(CATEGORIES)) {
 
     /*
      * .includes() checks if our firstWord exists in the keywords array
-     * 
+     *
      * Example:
      *   categoryName = "npm"
      *   keywords = ["npm", "npx"]
@@ -159,7 +159,7 @@ function categorize(command) {
 /*
  * module.exports → makes this function available to other files
  * Without this line — no other file can use categorize()
- * 
+ *
  * This is how Node.js shares code between files
  */
-module.exports = { categorize };
+export { categorize };

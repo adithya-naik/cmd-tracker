@@ -2,6 +2,7 @@
   "name": "@adithya-naik/cmd-tracker",
   "version": "1.0.0",
   "description": "📟 A developer tool that auto-captures, categorizes and saves terminal commands per project for easy revision",
+  "type": "module",
   "main": "src/index.js",
   "bin": {
     "tracker": "./bin/tracker.js"

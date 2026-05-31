@@ -8,10 +8,15 @@
  * use them programmatically in their own code
  */
 
-const { saveCommand, readCommands, initStorage } = require("./utils/storage");
-const { categorize } = require("./utils/categorizer");
+import {
+  saveCommand,
+  readCommands,
+  initStorage
+} from "./utils/storage.js";
 
-module.exports = {
+import { categorize } from "./utils/categorizer.js";
+
+export {
   saveCommand,
   readCommands,
   initStorage,
