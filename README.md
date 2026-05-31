@@ -100,6 +100,16 @@ Commands are automatically categorized into:
 | 🟢 `node` | node, nodemon... |
 | 🔴 `angular` | ng new, ng serve, ng generate... |
 | 🐍 `python` | python, pip install... |
+| 🔷 `go` | go build, go run, go get... |
+| ☕ `java` | java, javac, mvn, gradle... |
+| 🦀 `rust` | cargo build, cargo run, rustc... |
+| 🔷 `dotnet` | dotnet run, dotnet build... |
+| ☸️ `kubernetes` | kubectl get pods, helm install... |
+| 🗄️ `database` | mysql, psql, mongosh, redis-cli... |
+| ☁️ `cloud` | aws s3 ls, gcloud, az login... |
+| 📥 `packageManagers` | yarn, pnpm, brew, snap... |
+| 🧪 `testing` | jest, vitest, playwright, cypress... |
+| 🤖 `ai` | claude, gemini, opencode, aider... |
 | 📌 `others` | everything else |
 
 ---
