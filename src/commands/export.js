@@ -3,10 +3,10 @@
  * Now with proper error handling using validator.js
  */
 
-const fs = require("fs");
-const path = require("path");
-const { readCommands } = require("../utils/storage");
-const { isInitialized, showInitError } = require("../utils/validator");
+import fs from "fs";
+import path from "path";
+import { readCommands } from "../utils/storage.js";
+import { isInitialized, showInitError } from "../utils/validator.js";
 
 function exportCommand(options) {
 
@@ -89,4 +89,4 @@ function exportAsCSV(data, total) {
   }
 }
 
-module.exports = { exportCommand };
+export { exportCommand };

@@ -10,8 +10,8 @@
  * → Most used category
  */
 
-const { readCommands } = require("../utils/storage");
-const { isInitialized, showInitError } = require("../utils/validator");
+import { readCommands } from "../utils/storage.js";
+import { isInitialized, showInitError } from "../utils/validator.js";
 
 function statsCommand() {
 
@@ -29,7 +29,7 @@ function statsCommand() {
    * .reduce() → adds up all lengths
    *
    * Example:
-   * { git: [1,2], npm: [1] } 
+   * { git: [1,2], npm: [1] }
    * → values → [[1,2], [1]]
    * → reduce → 2 + 1 = 3
    */
@@ -117,4 +117,4 @@ function statsCommand() {
   }
 }
 
-module.exports = { statsCommand };
+export { statsCommand };

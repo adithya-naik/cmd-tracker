@@ -10,12 +10,12 @@
  * Returns matching commands with their category
  */
 
-const { readCommands } = require("../utils/storage");
-const {
+import { readCommands } from "../utils/storage.js";
+import {
   isInitialized,
   showInitError,
   isValidQuery
-} = require("../utils/validator");
+} from "../utils/validator.js";
 
 /*
  * searchCommand() — main function
@@ -94,4 +94,4 @@ function searchCommand(query) {
   }
 }
 
-module.exports = { searchCommand };
+export { searchCommand };

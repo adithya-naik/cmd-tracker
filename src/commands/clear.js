@@ -3,16 +3,17 @@
  * Now with proper error handling using validator.js
  */
 
-const fs = require("fs");
-const path = require("path");
-const readline = require("readline");
-const { readCommands } = require("../utils/storage");
-const {
+import fs from "fs";
+import path from "path";
+import readline from "readline";
+
+import { readCommands } from "../utils/storage.js";
+import {
   isInitialized,
   showInitError,
   isValidCategory,
   showCategoryError
-} = require("../utils/validator");
+} from "../utils/validator.js";
 
 const COMMANDS_FILE = path.join(process.cwd(), ".tracker", "commands.json");
 
@@ -106,4 +107,4 @@ async function clearCommand(category) {
   }
 }
 
-module.exports = { clearCommand };
+export { clearCommand };

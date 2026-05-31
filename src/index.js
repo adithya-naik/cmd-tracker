@@ -8,12 +8,7 @@
  * use them programmatically in their own code
  */
 
-const { saveCommand, readCommands, initStorage } = require("./utils/storage");
-const { categorize } = require("./utils/categorizer");
-
-module.exports = {
-  saveCommand,
-  readCommands,
-  initStorage,
-  categorize
-};
+export { saveCommand }   from "./save.js";
+export { readCommands }  from "./list.js";
+export { initStorage }   from "./init.js";
+export { categorize }    from "./categorize.js";
