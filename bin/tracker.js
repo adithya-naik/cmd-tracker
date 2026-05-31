@@ -24,7 +24,7 @@ import { program } from "commander";
 // Import package.json to read our version number
 // __dirname = current folder path (bin/)
 // ../ = go one level up (to root of project)
-import { createRequire } from "module";
+import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 const packageJson = require("../package.json");
 

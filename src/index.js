@@ -8,17 +8,7 @@
  * use them programmatically in their own code
  */
 
-import {
-  saveCommand,
-  readCommands,
-  initStorage
-} from "./utils/storage.js";
-
-import { categorize } from "./utils/categorizer.js";
-
-export {
-  saveCommand,
-  readCommands,
-  initStorage,
-  categorize
-};
+export { saveCommand }   from "./save.js";
+export { readCommands }  from "./list.js";
+export { initStorage }   from "./init.js";
+export { categorize }    from "./categorize.js";
