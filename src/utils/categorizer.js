@@ -173,7 +173,9 @@ const CATEGORIES = {
         "opencode",
         "aider",
         "q",
-        "warp"
+        "warp",
+        "ollama",
+        "huggingface-cli"
     ],
 
 };

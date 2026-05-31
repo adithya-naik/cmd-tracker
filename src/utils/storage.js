@@ -167,6 +167,17 @@ function saveCommand(command) {
   const data = readCommands();
 
   /*
+   * MIGRATION GUARD
+   *
+   * Existing users might have an old commands.json without the new
+   * categories (go, java, rust, ai, etc.). Without this check,
+   * data[category] will be undefined and crash on .some() / .push()
+   */
+  if (!data[category]) {
+    data[category] = [];
+  }
+
+  /*
    * DUPLICATE CHECK
    *
    * .some() → loops through array and returns true if ANY item matches
