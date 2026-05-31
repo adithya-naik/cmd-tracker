@@ -5,6 +5,10 @@
 ### A developer tool that auto-captures, categorizes and saves terminal commands per project for easy revision
 
 [![npm version](https://img.shields.io/npm/v/@adithya-naik/cmd-tracker.svg)](https://www.npmjs.com/package/@adithya-naik/cmd-tracker)
+[![npm downloads](https://img.shields.io/npm/dm/@adithya-naik/cmd-tracker.svg)](https://www.npmjs.com/package/@adithya-naik/cmd-tracker)
+[![npm total downloads](https://img.shields.io/npm/dt/@adithya-naik/cmd-tracker.svg)](https://www.npmjs.com/package/@adithya-naik/cmd-tracker)
+[![GitHub stars](https://img.shields.io/github/stars/adithya-naik/cmd-tracker.svg)](https://github.com/adithya-naik/cmd-tracker/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/adithya-naik/cmd-tracker.svg)](https://github.com/adithya-naik/cmd-tracker/issues)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/Node.js-v14%2B-green.svg)](https://nodejs.org)
 
