@@ -56,6 +56,16 @@ function getDefaultStructure() {
     node: [],
     angular: [],
     python: [],
+    go: [],
+    java: [],
+    rust: [],
+    dotnet: [],
+    kubernetes: [],
+    database: [],
+    cloud: [],
+    packageManagers: [],
+    testing: [],
+    ai: [],
     others: [],
   };
 }
