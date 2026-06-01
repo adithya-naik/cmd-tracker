@@ -136,8 +136,8 @@ function detectShell() {
 
     try {
         const ppid = process.ppid;
-        const { execSync } = require("child_process");
-        const comm = execSync(`ps -o comm= -p ${ppid}`, { encoding: "utf-8" }).trim();
+        const { execFileSync } = require("child_process");
+        const comm = execFileSync("ps", ["-o", "comm=", "-p", String(ppid)], { encoding: "utf-8" }).trim();
         if (comm.includes("fish")) return "fish";
         if (comm.includes("zsh")) return "zsh";
         if (comm.includes("bash")) return "bash";
