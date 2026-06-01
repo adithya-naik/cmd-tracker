@@ -56,6 +56,16 @@ function getDefaultStructure() {
     node: [],
     angular: [],
     python: [],
+    go: [],
+    java: [],
+    rust: [],
+    dotnet: [],
+    kubernetes: [],
+    database: [],
+    cloud: [],
+        packagemanagers: [],
+    testing: [],
+    ai: [],
     others: [],
   };
 }
@@ -123,7 +133,8 @@ function readCommands() {
    * JSON.parse() → converts JSON text back to JavaScript object
    */
   const fileContent = fs.readFileSync(COMMANDS_FILE, "utf-8");
-  return JSON.parse(fileContent);
+  const parsed = JSON.parse(fileContent);
+  return { ...getDefaultStructure(), ...parsed };
 }
 
 /*

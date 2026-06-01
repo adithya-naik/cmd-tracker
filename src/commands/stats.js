@@ -57,7 +57,17 @@ function statsCommand() {
     node:    "🟢",
     angular: "🔴",
     python:  "🐍",
-    others:  "📌"
+    go: "🔷",
+    java: "☕",
+    rust: "🦀",
+    dotnet: "🔷",
+    kubernetes: "☸️",
+    database: "🗄️",
+    cloud: "☁️",
+    packageManagers: "📥",
+    testing: "🧪",
+    ai: "🤖",
+    others: "📌"
   };
 
   /*

@@ -51,10 +51,26 @@ function showInitError() {
  * @returns {boolean} — true if valid, false if not
  */
 function isValidCategory(category) {
-  const validCategories = [
-    "git", "npm", "docker", "linux",
-    "node", "angular", "python", "others"
-  ];
+    const validCategories = [
+        "git",
+        "npm",
+        "docker",
+        "linux",
+        "node",
+        "angular",
+        "python",
+        "go",
+        "java",
+        "rust",
+        "dotnet",
+        "kubernetes",
+        "database",
+        "cloud",
+        "packagemanagers",
+        "testing",
+        "ai",
+        "others"
+    ];
   return validCategories.includes(category.toLowerCase());
 }
 
@@ -65,7 +81,7 @@ function isValidCategory(category) {
  */
 function showCategoryError(category) {
   console.log(`\n❌ Unknown category: "${category}"`);
-  console.log("📋 Valid categories: git, npm, docker, linux, node, angular, python, others\n");
+    console.log("📋 Valid categories: git, npm, docker, linux, node, angular, python, go, java, rust, dotnet, kubernetes, database, cloud, packageManagers, testing, ai, others\n");
 }
 
 /*
