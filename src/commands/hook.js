@@ -84,11 +84,12 @@ function unhookCommand() {
 
     if (result.success) {
         console.log("\n🎯 Almost done! Run this to apply changes:");
+        const shell = result.shell || detectShell();
         const sourceCmd = {
             zsh: "~/.zshrc",
             bash: "~/.bashrc",
             fish: "~/.config/fish/config.fish",
-        }[result.shell];
+        }[shell];
         console.log(`\n   source ${sourceCmd}\n`);
         console.log("After that — automatic capture will be disabled\n");
     }
