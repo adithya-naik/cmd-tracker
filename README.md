@@ -59,7 +59,9 @@ npx tracker init
 **Step 2 — Enable automatic capture:**
 ```bash
 npx tracker hook
-source ~/.bashrc  # or source ~/.zshrc on Mac
+source ~/.bashrc                # bash
+source ~/.zshrc                 # zsh (Mac)
+source ~/.config/fish/config.fish  # fish
 ```
 
 **Step 3 — Work normally! Then revise:**
@@ -172,9 +174,46 @@ your-project/
 | Linux (bash) | ✅ Full support |
 | Windows (Git Bash) | ✅ Supported |
 | Windows (PowerShell) | ⚠️ Manual save only |
+| Fish | ✅ Full support |
 
 > Windows CMD/PowerShell users: use `tracker save "command"` manually
 > or use Git Bash / WSL for automatic capture
+
+---
+
+## 🐟 Fish Shell Support
+
+### Install Fish Shell
+
+**Mac:**
+```bash
+brew install fish
+```
+
+**Ubuntu/Debian:**
+```bash
+sudo apt install fish
+```
+
+**Fedora:**
+```bash
+sudo dnf install fish
+```
+
+**Windows (WSL):**
+```bash
+sudo apt install fish
+```
+
+### Setup tracker in Fish
+
+```bash
+tracker init
+tracker hook
+source ~/.config/fish/config.fish
+```
+
+That's it! Every command you type in fish will now be saved automatically! 🎉
 
 ---
 
