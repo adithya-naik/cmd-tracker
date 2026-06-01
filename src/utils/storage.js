@@ -63,7 +63,7 @@ function getDefaultStructure() {
     kubernetes: [],
     database: [],
     cloud: [],
-    packageManagers: [],
+        packagemanagers: [],
     testing: [],
     ai: [],
     others: [],

@@ -139,7 +139,7 @@ const CATEGORIES = {
      *           brew install git,
      *           snap install code
      */
-    packageManagers: [
+    packagemanagers: [
         "yarn",
         "pnpm",
         "brew",

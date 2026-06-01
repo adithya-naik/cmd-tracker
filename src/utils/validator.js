@@ -66,7 +66,7 @@ function isValidCategory(category) {
         "kubernetes",
         "database",
         "cloud",
-        "packageManagers",
+        "packagemanagers",
         "testing",
         "ai",
         "others"

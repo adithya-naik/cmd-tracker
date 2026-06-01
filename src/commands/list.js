@@ -92,7 +92,7 @@ function displayCategory(categoryName, commands) {
     kubernetes: "☸️",
     database: "🗄️",
     cloud: "☁️",
-    packageManagers: "📥",
+    packagemanagers: "📥",
     testing: "🧪",
     ai: "🤖",
     others: "📌"
