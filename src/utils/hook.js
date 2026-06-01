@@ -128,21 +128,27 @@ const HOOK_MARKER = "# cmd-tracker shell hook — auto saves every command you t
  * @returns {string} — "bash", "zsh", "fish", or "unknown"
  */
 function detectShell() {
-    if (process.env.FISH_VERSION) return "fish";
-
     const shell = process.env.SHELL || "";
 
-  if (shell.includes("zsh")) return "zsh";
-  if (shell.includes("bash")) return "bash";
-  if (shell.includes("fish")) return "fish";
-  /*
-   * On Windows — check SHELL or ComSpec
-   * Most Windows users use bash via Git Bash
-   */
-  const comspec = process.env.ComSpec || "";
-  if (comspec.includes("cmd.exe")) return "unknown";
+    if (process.env.FISH_VERSION) return "fish";
 
-  return "bash"; // default to bash
+    if (shell.includes("fish")) return "fish";
+
+    try {
+        const ppid = process.ppid;
+        const comm = fs.readFileSync(`/proc/${ppid}/comm`, "utf-8").trim();
+        if (comm.includes("fish")) return "fish";
+        if (comm.includes("zsh")) return "zsh";
+        if (comm.includes("bash")) return "bash";
+    } catch (_) {}
+
+    if (shell.includes("zsh")) return "zsh";
+    if (shell.includes("bash")) return "bash";
+
+    const comspec = process.env.ComSpec || "";
+    if (comspec.includes("cmd.exe")) return "unknown";
+
+    return "bash";
 }
 
 /*
