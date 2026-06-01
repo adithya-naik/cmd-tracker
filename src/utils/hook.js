@@ -17,9 +17,9 @@
  * 4. User sources their config → automatic capture starts!
  */
 
-const fs = require("fs");
-const path = require("path");
-const os = require("os");
+const fs = require("node:fs");
+const path = require("node:path");
+const os = require("node:os");
 
 /*
  * os module — built into Node.js
@@ -136,7 +136,7 @@ function detectShell() {
 
     try {
         const ppid = process.ppid;
-        const { execFileSync } = require("child_process");
+        const { execFileSync } = require("node:child_process");
         const comm = execFileSync("/bin/ps", ["-o", "comm=", "-p", String(ppid)], { encoding: "utf-8" }).trim();
         if (comm.includes("fish")) return "fish";
         if (comm.includes("zsh")) return "zsh";
