@@ -8,18 +8,18 @@
  * Supported shells:
  * → bash → hooks into ~/.bashrc
  * → zsh  → hooks into ~/.zshrc
- * → Both are most common shells on Mac/Linux
+ * → fish → hooks into ~/.config/fish/config.fish
  *
  * How it works:
- * 1. Detect user's shell (bash or zsh)
+ * 1. Detect user's shell (bash, zsh, or fish)
  * 2. Add a hook script to their shell config file
  * 3. Hook script calls "tracker save <command>" after every command
  * 4. User sources their config → automatic capture starts!
  */
 
-const fs = require("fs");
-const path = require("path");
-const os = require("os");
+const fs = require("node:fs");
+const path = require("node:path");
+const os = require("node:os");
 
 /*
  * os module — built into Node.js
@@ -35,7 +35,9 @@ const HOME_DIR = os.homedir();
  */
 const SHELL_CONFIGS = {
   bash: path.join(HOME_DIR, ".bashrc"),
-  zsh: path.join(HOME_DIR, ".zshrc")
+  zsh: path.join(HOME_DIR, ".zshrc"),
+  fish: path.join(HOME_DIR, ".config/fish/config.fish"),
+
 };
 
 /*
@@ -90,6 +92,21 @@ const HOOK_SCRIPT = [
   ""
 ].join("\n");
 
+
+const FISH_HOOK_SCRIPT = [
+    "",
+    "# cmd-tracker shell hook — auto saves every command you type",
+    "function __cmd_tracker_postexec --on-event fish_postexec",
+    "    set -l last_cmd (history --max=1)",
+    "",
+    '    if test -n "$last_cmd"',
+    '        tracker save "$last_cmd" >/dev/null 2>&1',
+    "    end",
+    "end",
+    "",
+].join("\n");
+
+
 /*
  * HOOK_MARKER — unique string we add to identify our hook
  * We use this to:
@@ -101,27 +118,38 @@ const HOOK_MARKER = "# cmd-tracker shell hook — auto saves every command you t
 /*
  * detectShell() — detects which shell user is running
  *
- * process.env.SHELL → environment variable containing shell path
- * Example:
- * "/bin/bash" → bash
- * "/bin/zsh"  → zsh
+ * Priority:
+ * 1. process.env.FISH_VERSION — fish sets this automatically
+ *    even when launched from another shell (parent $SHELL
+ *    would still show bash/zsh)
+ * 2. process.env.SHELL — the standard shell path variable
+ *    Examples: "/bin/bash" → bash, "/bin/zsh" → zsh
  *
- * @returns {string} — "bash", "zsh", or "unknown"
+ * @returns {string} — "bash", "zsh", "fish", or "unknown"
  */
 function detectShell() {
-  const shell = process.env.SHELL || "";
+    const shell = process.env.SHELL || "";
 
-  if (shell.includes("zsh")) return "zsh";
-  if (shell.includes("bash")) return "bash";
+    if (process.env.FISH_VERSION) return "fish";
 
-  /*
-   * On Windows — check SHELL or ComSpec
-   * Most Windows users use bash via Git Bash
-   */
-  const comspec = process.env.ComSpec || "";
-  if (comspec.includes("cmd.exe")) return "unknown";
+    if (shell.includes("fish")) return "fish";
 
-  return "bash"; // default to bash
+    try {
+        const ppid = process.ppid;
+        const { execFileSync } = require("node:child_process");
+        const comm = execFileSync("/bin/ps", ["-o", "comm=", "-p", String(ppid)], { encoding: "utf-8" }).trim();
+        if (comm.includes("fish")) return "fish";
+        if (comm.includes("zsh")) return "zsh";
+        if (comm.includes("bash")) return "bash";
+    } catch (_) {}
+
+    if (shell.includes("zsh")) return "zsh";
+    if (shell.includes("bash")) return "bash";
+
+    const comspec = process.env.ComSpec || "";
+    if (comspec.includes("cmd.exe")) return "unknown";
+
+    return "unknown";
 }
 
 /*
@@ -176,7 +204,17 @@ function installHook() {
      * Append hook script to shell config file
      * appendFileSync → adds to end without deleting existing content
      */
-    fs.appendFileSync(configFile, HOOK_SCRIPT);
+        if (shell === "fish") {
+            fs.mkdirSync(path.dirname(configFile), { recursive: true });
+        }
+
+        /*
+         * Choose correct hook
+         */
+        const hookScript =
+            shell === "fish" ? FISH_HOOK_SCRIPT : HOOK_SCRIPT;
+
+        fs.appendFileSync(configFile, hookScript);
 
     return {
       success: true,
