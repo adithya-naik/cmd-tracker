@@ -208,8 +208,8 @@ sudo apt install fish
 ### Setup tracker in Fish
 
 ```bash
-tracker init
-tracker hook
+npx tracker init
+npx tracker hook
 source ~/.config/fish/config.fish
 ```
 
