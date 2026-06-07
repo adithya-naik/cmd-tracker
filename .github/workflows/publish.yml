@@ -1,14 +1,5 @@
-# publish.yml
-# This workflow runs when code is merged to main
-# It automatically:
-# 1. Bumps the version in package.json
-# 2. Creates a GitHub Release
-# 3. Publishes to npm
-
 name: Publish to npm
 
-# WHEN to run — only on push to main
-# This means: when a PR is merged to main
 on:
   push:
     branches:
@@ -19,22 +10,16 @@ jobs:
     name: Bump Version and Publish
     runs-on: ubuntu-latest
 
-    # IMPORTANT: needs write permission to push version bump
     permissions:
       contents: write
 
     steps:
-      # Step 1 — Checkout with full history
-      # fetch-depth: 0 → gets ALL commits not just latest
-      # We need this to properly bump version
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      # Step 2 — Setup Node.js with npm registry
-      # registry-url → tells npm where to publish
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -42,51 +27,33 @@ jobs:
           registry-url: "https://registry.npmjs.org"
           cache: "npm"
 
-      # Step 3 — Install dependencies
       - name: Install dependencies
         run: npm ci
 
-      # Step 4 — Configure git for version bump commit
-      # GitHub Actions needs git config to make commits
       - name: Configure git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      # Step 5 — Bump version automatically
-      # npm version patch → 1.0.0 → 1.0.1
-      # npm version minor → 1.0.0 → 1.1.0
-      # npm version major → 1.0.0 → 2.0.0
-      #
-      # We use PATCH for regular updates
-      # The -m flag → creates a commit with version number
       - name: Bump patch version
         run: npm version patch -m "chore: bump version to %s [skip ci]"
 
-      # Step 6 — Push version bump back to main
-      # --follow-tags → pushes the version tag too
       - name: Push version bump
         run: git push origin main --follow-tags
 
-      # Step 7 — Get the new version number
-      # We store it in GITHUB_ENV so next steps can use it
       - name: Get new version
+        id: get_version
         run: |
           NEW_VERSION=$(node -e "console.log(require('./package.json').version)")
-          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-          echo "New version: $NEW_VERSION"
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
-      # Step 8 — Create GitHub Release automatically
-      # Uses the version tag created by npm version
       - name: Create GitHub Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ env.NEW_VERSION }}
-          release_name: v${{ env.NEW_VERSION }}
+          tag_name: v${{ steps.get_version.outputs.version }}
+          name: v${{ steps.get_version.outputs.version }}
           body: |
-            ## 🚀 v${{ env.NEW_VERSION }}
+            ## v${{ steps.get_version.outputs.version }}
 
             ### Installation
             npm install @adithya-naik/cmd-tracker
@@ -95,17 +62,9 @@ jobs:
             npx tracker init
             npx tracker hook
             source ~/.bashrc
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-            ### Full Changelog
-            See commits on GitHub
-
-            ### Full Changelog
-            See [commits](https://github.com/adithya-naik/cmd-tracker/commits/main)
-          draft: false
-          prerelease: false
-
-      # Step 9 — Publish to npm!
-      # NODE_AUTH_TOKEN → uses our npm token from GitHub Secrets
       - name: Publish to npm
         run: npm publish --access public
         env:
