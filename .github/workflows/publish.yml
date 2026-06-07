@@ -89,16 +89,15 @@ jobs:
             ## 🚀 v${{ env.NEW_VERSION }}
 
             ### Installation
-```bash
             npm install @adithya-naik/cmd-tracker
-```
 
             ### Quick Start
-```bash
             npx tracker init
             npx tracker hook
             source ~/.bashrc
-```
+
+            ### Full Changelog
+            See commits on GitHub
 
             ### Full Changelog
             See [commits](https://github.com/adithya-naik/cmd-tracker/commits/main)
