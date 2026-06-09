@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - main
+
+# Least privilege permissions
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate Code
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate package.json
+        run: node -e "require('./package.json')"
+
+      - name: Validate project structure
+        run: |
+          echo "Checking required files exist..."
+          test -f bin/tracker.js && echo "✅ bin/tracker.js exists"
+          test -f src/utils/storage.js && echo "✅ storage.js exists"
+          test -f src/utils/categorizer.js && echo "✅ categorizer.js exists"
+          test -f src/utils/validator.js && echo "✅ validator.js exists"
+          test -f src/utils/hook.js && echo "✅ hook.js exists"
+          test -f src/commands/init.js && echo "✅ init.js exists"
+          test -f src/commands/save.js && echo "✅ save.js exists"
+          test -f src/commands/list.js && echo "✅ list.js exists"
+          test -f src/commands/search.js && echo "✅ search.js exists"
+          test -f src/commands/stats.js && echo "✅ stats.js exists"
+          test -f src/commands/clear.js && echo "✅ clear.js exists"
+          test -f src/commands/export.js && echo "✅ export.js exists"
+          test -f src/commands/favorite.js && echo "✅ favorite.js exists"
+          test -f src/commands/hook.js && echo "✅ hook command exists"
+          echo "✅ All required files present!"
+
+      - name: Test core functionality
+        run: |
+          echo "Testing categorizer..."
+          node -e "
+            const {categorize} = require('./src/utils/categorizer');
+            function assert(condition, message) {
+              if (!condition) throw new Error('FAILED: ' + message);
+            }
+            assert(categorize('git status') === 'git', 'git failed');
+            assert(categorize('npm install') === 'npm', 'npm failed');
+            assert(categorize('docker ps') === 'docker', 'docker failed');
+            assert(categorize('ls -la') === 'linux', 'linux failed');
+            assert(categorize('ng serve') === 'angular', 'angular failed');
+            assert(categorize('go run main.go') === 'go', 'go failed');
+            assert(categorize('aws s3 ls') === 'cloud', 'cloud failed');
+            assert(categorize('jest') === 'testing', 'testing failed');
+            console.log('✅ All categorizer tests passed!');
+          "
+
+      - name: Test CLI loads
+        run: |
+          node bin/tracker.js --version
+          echo "✅ CLI loads successfully!"
