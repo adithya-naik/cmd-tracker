@@ -1,52 +1,38 @@
-# ci.yml
-# This workflow runs on every Pull Request
-# It validates code quality before merging
-# Think of it as a gatekeeper — bad code doesn't get in!
-
 name: CI
 
-# WHEN to run this workflow
 on:
   pull_request:
-    # Run when PR targets these branches
     branches:
       - develop
       - main
 
+# Least privilege permissions
+permissions:
+  contents: read
+
 jobs:
-  # JOB 1 — Validate the code
   validate:
     name: Validate Code
-    
-    # Run on latest Ubuntu Linux
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1 — Checkout the code
-      # Without this — the runner has no code to work with!
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
 
-      # Step 2 — Setup Node.js
-      # We specify version 20 — same as what we use locally
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af
         with:
           node-version: "20"
           cache: "npm"
 
-      # Step 3 — Install dependencies
-      # Same as running npm install locally
       - name: Install dependencies
         run: npm ci
 
-      # Step 4 — Check package.json is valid
-      # Validates our package structure is correct
       - name: Validate package.json
         run: node -e "require('./package.json')"
 
-      # Step 5 — Check all files exist
-      # Makes sure no one accidentally deleted a file
       - name: Validate project structure
         run: |
           echo "Checking required files exist..."
@@ -66,25 +52,25 @@ jobs:
           test -f src/commands/hook.js && echo "✅ hook command exists"
           echo "✅ All required files present!"
 
-      # Step 6 — Test core logic works
-      # Actually runs our categorizer and storage to verify they work
       - name: Test core functionality
         run: |
           echo "Testing categorizer..."
           node -e "
             const {categorize} = require('./src/utils/categorizer');
-            console.assert(categorize('git status') === 'git', 'git failed');
-            console.assert(categorize('npm install') === 'npm', 'npm failed');
-            console.assert(categorize('docker ps') === 'docker', 'docker failed');
-            console.assert(categorize('ls -la') === 'linux', 'linux failed');
-            console.assert(categorize('ng serve') === 'angular', 'angular failed');
-            console.assert(categorize('go run main.go') === 'go', 'go failed');
-            console.assert(categorize('aws s3 ls') === 'cloud', 'cloud failed');
-            console.assert(categorize('jest') === 'testing', 'testing failed');
+            function assert(condition, message) {
+              if (!condition) throw new Error('FAILED: ' + message);
+            }
+            assert(categorize('git status') === 'git', 'git failed');
+            assert(categorize('npm install') === 'npm', 'npm failed');
+            assert(categorize('docker ps') === 'docker', 'docker failed');
+            assert(categorize('ls -la') === 'linux', 'linux failed');
+            assert(categorize('ng serve') === 'angular', 'angular failed');
+            assert(categorize('go run main.go') === 'go', 'go failed');
+            assert(categorize('aws s3 ls') === 'cloud', 'cloud failed');
+            assert(categorize('jest') === 'testing', 'testing failed');
             console.log('✅ All categorizer tests passed!');
           "
 
-      # Step 7 — Test CLI entry point loads correctly
       - name: Test CLI loads
         run: |
           node bin/tracker.js --version
