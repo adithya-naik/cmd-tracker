@@ -14,6 +14,7 @@
  */
 
 const { saveCommand } = require("../utils/storage");
+const colors = require("../utils/colors");
 const { isInitialized } = require("../utils/validator");
 
 function saveCommandAction(command) {
@@ -47,7 +48,10 @@ function saveCommandAction(command) {
      * Stay silent for duplicates
      */
     if (result.saved) {
-      console.log(`✅ Saved [${result.category}]: ${command}`);
+      const categoryColor = colors.getCategoryColor(result.category);
+       console.log(
+        `${colors.success("✅ Saved")} [${categoryColor(result.category)}]: ${command}`
+      );
     }
 
   } catch (error) {
