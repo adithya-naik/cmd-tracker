@@ -12,7 +12,7 @@
 
 const { readCommands } = require("../utils/storage");
 const { isInitialized, showInitError } = require("../utils/validator");
-
+const colors = require("../utils/colors");
 function statsCommand() {
 
   if (!isInitialized()) {
@@ -38,13 +38,13 @@ function statsCommand() {
   );
 
     if (total === 0) {
-      console.log("\n📭 No commands saved yet!");
-      console.log("💡 Use: tracker save \"your command\"\n");
+      console.log(colors.warning("\n📭 No commands saved yet!"));
+      console.log(colors.info("💡 Use: ") + colors.bold('tracker save "your command"') + "\n");
       return;
     }
 
-    console.log("\n📊 CMD-TRACKER — Statistics\n");
-    console.log("─".repeat(50));
+    console.log(colors.heading("\n📊 CMD-TRACKER — Statistics\n"));
+    console.log(colors.dim("─".repeat(50)));
 
   /*
    * Category icons — same as list.js for consistency
@@ -102,11 +102,13 @@ function statsCommand() {
 
     const icon = icons[category] || "📌";
 
+     const categoryColor = colors.getCategoryColor(category);
+
     console.log(
-      `\n${icon}  ${category.toUpperCase().padEnd(10)} ` +
-      `${String(commands.length).padStart(3)} commands  ` +
-      `${String(percentage).padStart(3)}%  ${bar}`
-    );
+        `\n${icon}  ${categoryColor.bold(category.toUpperCase().padEnd(15))} ` +
+        `${colors.dim(String(commands.length).padStart(3) + " commands")}  ` +
+        `${colors.dim(String(percentage).padStart(3) + "%")}  ${categoryColor(bar)}`
+      );
 
     /*
      * Track top category
@@ -117,13 +119,14 @@ function statsCommand() {
     }
   }
 
-    console.log("\n" + "─".repeat(50));
-    console.log(`📦 Total commands : ${total}`);
-    console.log(`🏆 Most used      : ${topCategory} (${topCount} commands)\n`);
+    console.log("\n" + colors.dim("─".repeat(50)));
+    console.log(colors.info("📦 Total commands : ") + colors.bold(total));
+    console.log(colors.info("🏆 Most used      : ") + colors.bold(`${topCategory} (${topCount} commands)`) + "\n");
+
 
   } catch (error) {
-    console.log("\n❌ Error reading statistics");
-    console.log("💡 Try running tracker init again\n");
+     console.log(colors.error("\n❌ Error reading statistics"));
+    console.log(colors.info("💡 Try running tracker init again\n"));
   }
 }
 
