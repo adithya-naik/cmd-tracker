@@ -10,12 +10,12 @@
  * Returns matching commands with their category
  */
 
-const { readCommands } = require("../utils/storage");
+const { readCommands } = require('../utils/storage');
 const {
   isInitialized,
   showInitError,
   isValidQuery
-} = require("../utils/validator");
+} = require('../utils/validator');
 
 /*
  * searchCommand() — main function
@@ -37,8 +37,8 @@ function searchCommand(query) {
    * Validate query
    */
   if (!isValidQuery(query)) {
-    console.log("\n❌ Please provide a search query");
-    console.log("💡 Usage: tracker search \"git\"\n");
+    console.log('\n❌ Please provide a search query');
+    console.log('💡 Usage: tracker search "git"\n');
     return;
   }
 
@@ -65,32 +65,32 @@ function searchCommand(query) {
     }
 
     console.log(`\n🔍 Search results for: "${query}"`);
-    console.log("─".repeat(50));
+    console.log('─'.repeat(50));
 
-  results.forEach((item, index) => {
+    results.forEach((item, index) => {
 
-    const date = new Date(item.time).toLocaleDateString();
+      const date = new Date(item.time).toLocaleDateString();
 
-    /*
+      /*
      * Highlight the search term in results
      * Replace matched part with uppercase version
      * So user can easily spot what matched
      */
-    const highlighted = item.command.replace(
-      new RegExp(searchTerm, "gi"),
-      (match) => `[${match.toUpperCase()}]`
-    );
+      const highlighted = item.command.replace(
+        new RegExp(searchTerm, 'gi'),
+        (match) => `[${match.toUpperCase()}]`
+      );
 
-    console.log(`\n  ${index + 1}. ${highlighted}`);
-    console.log(`     📁 Category: ${item.category}  📅 ${date}`);
-  });
+      console.log(`\n  ${index + 1}. ${highlighted}`);
+      console.log(`     📁 Category: ${item.category}  📅 ${date}`);
+    });
 
-    console.log("\n" + "─".repeat(50));
+    console.log('\n' + '─'.repeat(50));
     console.log(`✅ Found ${results.length} matching command(s)\n`);
 
   } catch (error) {
-    console.log("\n❌ Error searching commands");
-    console.log("💡 Try running tracker init again\n");
+    console.log('\n❌ Error searching commands');
+    console.log('💡 Try running tracker init again\n');
   }
 }
 

@@ -13,8 +13,8 @@
  * We NEVER want it to interrupt user's workflow
  */
 
-const { saveCommand } = require("../utils/storage");
-const { isInitialized } = require("../utils/validator");
+const { saveCommand } = require('../utils/storage');
+const { isInitialized } = require('../utils/validator');
 
 function saveCommandAction(command) {
 
