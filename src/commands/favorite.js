@@ -11,7 +11,7 @@
 
 const { toggleFavorite, getFavorites } = require("../utils/storage");
 const { isInitialized, showInitError } = require("../utils/validator");
-
+const colors = require("../utils/colors");
 /*
  * favoriteCommand() — toggles favorite on a specific command
  *
@@ -25,8 +25,8 @@ function favoriteCommand(command) {
   }
 
   if (!command || !command.trim()) {
-    console.log("\n❌ Please provide a command to favorite");
-    console.log("💡 Usage: tracker favorite \"git status\"\n");
+    console.log(colors.error("\n❌ Please provide a command to favorite"));
+    console.log(colors.info('💡 Usage: ') + colors.bold('tracker favorite "git status"') + "\n");
     return;
   }
 
@@ -35,24 +35,24 @@ function favoriteCommand(command) {
 
     if (!result.success) {
       if (result.reason === "command not found") {
-        console.log(`\n❌ Command not found: "${command}"`);
-        console.log("💡 Run tracker list to see saved commands\n");
+        console.log(colors.error(`\n❌ Command not found: "${command}"`));
+        console.log(colors.info("💡 Run ") + colors.bold("tracker list") + colors.info(" to see saved commands\n"));
         return;
       }
-      console.log("\n❌ Failed to update favorite\n");
+      console.log(colors.error("\n❌ Failed to update favorite\n"));
       return;
     }
 
     if (result.action === "added") {
-      console.log(`\n⭐ Added to favorites: ${command}`);
-      console.log(`📁 Category: ${result.category}\n`);
+      console.log(colors.warning(`\n⭐ Added to favorites: `) + command);
+      console.log(colors.dim("📁 Category: ") + categoryColor(result.category) + "\n");
     } else {
-      console.log(`\n✅ Removed from favorites: ${command}\n`);
+      console.log(colors.success(`\n✅ Removed from favorites: ${command}\n`));
     }
 
   } catch (error) {
-    console.log("\n❌ Error updating favorite");
-    console.log("💡 Try running tracker init again\n");
+    console.log(colors.error("\n❌ Error updating favorite"));
+    console.log(colors.info("💡 Try running tracker init again\n"));
   }
 }
 
@@ -70,25 +70,27 @@ function favoritesCommand() {
     const favorites = getFavorites();
 
     if (favorites.length === 0) {
-      console.log("\n⭐ No favorites yet!");
-      console.log("💡 Usage: tracker favorite \"git status\"\n");
+      console.log(colors.warning("\n⭐ No favorites yet!"));
+      console.log(colors.info('💡 Usage: ') + colors.bold('tracker favorite "git status"') + "\n");
       return;
     }
 
-    console.log("\n⭐ CMD-TRACKER — Your Favorites\n");
-    console.log("─".repeat(50));
+    console.log(colors.heading("\n⭐ CMD-TRACKER — Your Favorites\n"));
+    console.log(colors.dim("─".repeat(50)));
 
     favorites.forEach((item, index) => {
       const date = new Date(item.time).toLocaleDateString();
-      console.log(`\n  ${index + 1}. ${item.command}`);
-      console.log(`     📁 ${item.category}  📅 ${date}`);
+      const categoryColor = colors.getCategoryColor(item.category);
+
+      console.log(`\n  ${colors.dim(index + 1 + ".")} ${item.command}`);
+      console.log(`     📁 ${categoryColor(item.category)}  ${colors.dim("📅 " + date)}`);
     });
 
-    console.log("\n" + "─".repeat(50));
-    console.log(`⭐ Total favorites: ${favorites.length}\n`);
+    console.log("\n" + colors.dim("─".repeat(50)));
+    console.log(colors.success(`⭐ Total favorites: ${favorites.length}\n`));
 
   } catch (error) {
-    console.log("\n❌ Error reading favorites\n");
+    console.log(colors.error("\n❌ Error reading favorites\n"));
   }
 }
 
