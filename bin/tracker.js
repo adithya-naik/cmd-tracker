@@ -19,12 +19,12 @@
 
 // Import commander - this package helps us build CLI commands easily
 // Like "list", "stats", "search" etc.
-const { program } = require("commander");
+const { program } = require('commander');
 
 // Import package.json to read our version number
 // __dirname = current folder path (bin/)
 // ../ = go one level up (to root of project)
-const packageJson = require("../package.json");
+const packageJson = require('../package.json');
 
 /*
  * Import our init command function
@@ -34,34 +34,34 @@ const packageJson = require("../package.json");
  * bin/ → go up one level → ../
  * then into src/commands/init.js
  */
-const { initCommand } = require("../src/commands/init");
+const { initCommand } = require('../src/commands/init');
 
 /*
  * Import our save command function
  * This runs automatically via shell hook every time
  * user types a command in terminal
  */
-const { saveCommandAction } = require("../src/commands/save");
+const { saveCommandAction } = require('../src/commands/save');
 // Import list command function
-const { listCommand } = require("../src/commands/list");
+const { listCommand } = require('../src/commands/list');
 // Import search command function
-const { searchCommand } = require("../src/commands/search");
-const { statsCommand } = require("../src/commands/stats");
-const { clearCommand } = require("../src/commands/clear");
-const { exportCommand } = require("../src/commands/export");
-const { hookCommand, unhookCommand } = require("../src/commands/hook");
-const { favoriteCommand, favoritesCommand } = require("../src/commands/favorite");
+const { searchCommand } = require('../src/commands/search');
+const { statsCommand } = require('../src/commands/stats');
+const { clearCommand } = require('../src/commands/clear');
+const { exportCommand } = require('../src/commands/export');
+const { hookCommand, unhookCommand } = require('../src/commands/hook');
+const { favoriteCommand, favoritesCommand } = require('../src/commands/favorite');
 /*
  * .name() → sets the name of our CLI tool
  * This shows up when user types: tracker --help
  */
-program.name("tracker");
+program.name('tracker');
 
 /*
  * .description() → explains what our tool does
  * This also shows up in: tracker --help
  */
-program.description("📟 A developer tool that auto-captures, categorizes and saves terminal commands per project for easy revision");
+program.description('📟 A developer tool that auto-captures, categorizes and saves terminal commands per project for easy revision');
 
 /*
  * .version() → sets the version of our CLI tool
@@ -79,21 +79,21 @@ program.version(packageJson.version);
  * So user runs: tracker hello
  */
 program
-  .command("hello")
+  .command('hello')
 
   /*
    * .description() → explains what this command does
    * Shows up when user types: tracker --help
    */
-  .description("A test command to check if CLI is working")
+  .description('A test command to check if CLI is working')
 
   /*
    * .action() → this function runs when user types: tracker hello
    * Whatever code you write inside here — runs when command is called
    */
   .action(() => {
-    console.log("👋 Hey! tracker CLI is working perfectly!");
-    console.log("🚀 Let's start tracking your commands!");
+    console.log('👋 Hey! tracker CLI is working perfectly!');
+    console.log('🚀 Let\'s start tracking your commands!');
   });
 
 
@@ -109,8 +109,8 @@ program
 * This keeps bin/tracker.js clean and simple
 */
 program
-  .command("init")
-  .description("Initialize cmd-tracker in your current project")
+  .command('init')
+  .description('Initialize cmd-tracker in your current project')
   .action(() => {
     initCommand();
   });
@@ -132,9 +132,9 @@ program
 * "[command]" → square brackets mean OPTIONAL
 */
 program
-  .command("save")
-  .description("Save a command to tracker (called automatically by shell hook)")
-  .argument("<command>", "the terminal command to save")
+  .command('save')
+  .description('Save a command to tracker (called automatically by shell hook)')
+  .argument('<command>', 'the terminal command to save')
   .action((command) => {
     saveCommandAction(command);
   });
@@ -148,9 +148,9 @@ program
 * [category] → square brackets = OPTIONAL argument
 */
 program
-  .command("list")
-  .description("List all saved commands or filter by category")
-  .argument("[category]", "optional category filter (git/npm/docker/linux/node/angular/python/others)")
+  .command('list')
+  .description('List all saved commands or filter by category')
+  .argument('[category]', 'optional category filter (git/npm/docker/linux/node/angular/python/others)')
   .action((category) => {
     listCommand(category);
   });
@@ -164,9 +164,9 @@ program
 * <query> → required argument
 */
 program
-  .command("search")
-  .description("Search through all saved commands")
-  .argument("<query>", "search term to look for in saved commands")
+  .command('search')
+  .description('Search through all saved commands')
+  .argument('<query>', 'search term to look for in saved commands')
   .action((query) => {
     searchCommand(query);
   });
@@ -176,8 +176,8 @@ program
 * tracker stats → shows category breakdown with percentages
 */
 program
-  .command("stats")
-  .description("Show statistics of saved commands by category")
+  .command('stats')
+  .description('Show statistics of saved commands by category')
   .action(() => {
     statsCommand();
   });
@@ -190,9 +190,9 @@ program
  * [category] → optional argument
  */
 program
-  .command("clear")
-  .description("Clear all saved commands or a specific category")
-  .argument("[category]", "optional category to clear")
+  .command('clear')
+  .description('Clear all saved commands or a specific category')
+  .argument('[category]', 'optional category to clear')
   .action((category) => {
     clearCommand(category);
   });
@@ -206,9 +206,9 @@ program
  * "--csv" → user types --csv to trigger CSV export
  */
 program
-  .command("export")
-  .description("Export saved commands as JSON or CSV file")
-  .option("--csv", "export as CSV instead of JSON")
+  .command('export')
+  .description('Export saved commands as JSON or CSV file')
+  .option('--csv', 'export as CSV instead of JSON')
   .action((options) => {
     exportCommand(options);
   });
@@ -218,8 +218,8 @@ program
 * tracker hook → installs shell hook for auto capture
 */
 program
-  .command("hook")
-  .description("Enable automatic command capture via shell hook")
+  .command('hook')
+  .description('Enable automatic command capture via shell hook')
   .action(() => {
     hookCommand();
   });
@@ -229,8 +229,8 @@ program
  * tracker unhook → removes shell hook
  */
 program
-  .command("unhook")
-  .description("Disable automatic command capture")
+  .command('unhook')
+  .description('Disable automatic command capture')
   .action(() => {
     unhookCommand();
   });
@@ -241,9 +241,9 @@ program
 * tracker favorite "git status" → toggles favorite
 */
 program
-  .command("favorite")
-  .description("Toggle a command as favorite")
-  .argument("<command>", "command to mark as favorite")
+  .command('favorite')
+  .description('Toggle a command as favorite')
+  .argument('<command>', 'command to mark as favorite')
   .action((command) => {
     favoriteCommand(command);
   });
@@ -253,8 +253,8 @@ program
  * tracker favorites → lists all favorites
  */
 program
-  .command("favorites")
-  .description("List all favorited commands")
+  .command('favorites')
+  .description('List all favorited commands')
   .action(() => {
     favoritesCommand();
   });

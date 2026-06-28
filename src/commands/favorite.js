@@ -9,8 +9,8 @@
  * in commands.json
  */
 
-const { toggleFavorite, getFavorites } = require("../utils/storage");
-const { isInitialized, showInitError } = require("../utils/validator");
+const { toggleFavorite, getFavorites } = require('../utils/storage');
+const { isInitialized, showInitError } = require('../utils/validator');
 
 /*
  * favoriteCommand() — toggles favorite on a specific command
@@ -25,8 +25,8 @@ function favoriteCommand(command) {
   }
 
   if (!command || !command.trim()) {
-    console.log("\n❌ Please provide a command to favorite");
-    console.log("💡 Usage: tracker favorite \"git status\"\n");
+    console.log('\n❌ Please provide a command to favorite');
+    console.log('💡 Usage: tracker favorite "git status"\n');
     return;
   }
 
@@ -34,16 +34,16 @@ function favoriteCommand(command) {
     const result = toggleFavorite(command.trim());
 
     if (!result.success) {
-      if (result.reason === "command not found") {
+      if (result.reason === 'command not found') {
         console.log(`\n❌ Command not found: "${command}"`);
-        console.log("💡 Run tracker list to see saved commands\n");
+        console.log('💡 Run tracker list to see saved commands\n');
         return;
       }
-      console.log("\n❌ Failed to update favorite\n");
+      console.log('\n❌ Failed to update favorite\n');
       return;
     }
 
-    if (result.action === "added") {
+    if (result.action === 'added') {
       console.log(`\n⭐ Added to favorites: ${command}`);
       console.log(`📁 Category: ${result.category}\n`);
     } else {
@@ -51,8 +51,8 @@ function favoriteCommand(command) {
     }
 
   } catch (error) {
-    console.log("\n❌ Error updating favorite");
-    console.log("💡 Try running tracker init again\n");
+    console.log('\n❌ Error updating favorite');
+    console.log('💡 Try running tracker init again\n');
   }
 }
 
@@ -70,13 +70,13 @@ function favoritesCommand() {
     const favorites = getFavorites();
 
     if (favorites.length === 0) {
-      console.log("\n⭐ No favorites yet!");
-      console.log("💡 Usage: tracker favorite \"git status\"\n");
+      console.log('\n⭐ No favorites yet!');
+      console.log('💡 Usage: tracker favorite "git status"\n');
       return;
     }
 
-    console.log("\n⭐ CMD-TRACKER — Your Favorites\n");
-    console.log("─".repeat(50));
+    console.log('\n⭐ CMD-TRACKER — Your Favorites\n');
+    console.log('─'.repeat(50));
 
     favorites.forEach((item, index) => {
       const date = new Date(item.time).toLocaleDateString();
@@ -84,11 +84,11 @@ function favoritesCommand() {
       console.log(`     📁 ${item.category}  📅 ${date}`);
     });
 
-    console.log("\n" + "─".repeat(50));
+    console.log('\n' + '─'.repeat(50));
     console.log(`⭐ Total favorites: ${favorites.length}\n`);
 
   } catch (error) {
-    console.log("\n❌ Error reading favorites\n");
+    console.log('\n❌ Error reading favorites\n');
   }
 }
 

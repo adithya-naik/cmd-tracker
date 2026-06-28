@@ -17,9 +17,9 @@
  * 4. User sources their config → automatic capture starts!
  */
 
-const fs = require("node:fs");
-const path = require("node:path");
-const os = require("node:os");
+const fs = require('node:fs');
+const path = require('node:path');
+const os = require('node:os');
 
 /*
  * os module — built into Node.js
@@ -34,9 +34,9 @@ const HOME_DIR = os.homedir();
  * These are standard locations for shell config files
  */
 const SHELL_CONFIGS = {
-  bash: path.join(HOME_DIR, ".bashrc"),
-  zsh: path.join(HOME_DIR, ".zshrc"),
-  fish: path.join(HOME_DIR, ".config/fish/config.fish"),
+  bash: path.join(HOME_DIR, '.bashrc'),
+  zsh: path.join(HOME_DIR, '.zshrc'),
+  fish: path.join(HOME_DIR, '.config/fish/config.fish'),
 
 };
 
@@ -69,42 +69,42 @@ const SHELL_CONFIGS = {
  * This is cleaner and works on all bash/zsh versions
  */
 const HOOK_SCRIPT = [
-  "",
-  "# cmd-tracker shell hook — auto saves every command you type",
-  "_cmd_tracker_hook() {",
-  "  local LAST_CMD",
-  "  LAST_CMD=$(history 1 | sed 's/^[[:space:]]*[0-9]*[[:space:]]*//')",
+  '',
+  '# cmd-tracker shell hook — auto saves every command you type',
+  '_cmd_tracker_hook() {',
+  '  local LAST_CMD',
+  '  LAST_CMD=$(history 1 | sed \'s/^[[:space:]]*[0-9]*[[:space:]]*//\')',
   '  if [ -n "$LAST_CMD" ]; then',
   '    tracker save "$LAST_CMD" > /dev/null 2>&1',
-  "  fi",
-  "}",
-  "",
-  "# For zsh",
+  '  fi',
+  '}',
+  '',
+  '# For zsh',
   'if [ -n "$ZSH_VERSION" ]; then',
-  "  autoload -U add-zsh-hook",
-  "  add-zsh-hook precmd _cmd_tracker_hook",
-  "fi",
-  "",
-  "# For bash",
+  '  autoload -U add-zsh-hook',
+  '  add-zsh-hook precmd _cmd_tracker_hook',
+  'fi',
+  '',
+  '# For bash',
   'if [ -n "$BASH_VERSION" ]; then',
   '  PROMPT_COMMAND="_cmd_tracker_hook${PROMPT_COMMAND:+;$PROMPT_COMMAND}"',
-  "fi",
-  ""
-].join("\n");
+  'fi',
+  ''
+].join('\n');
 
 
 const FISH_HOOK_SCRIPT = [
-    "",
-    "# cmd-tracker shell hook — auto saves every command you type",
-    "function __cmd_tracker_postexec --on-event fish_postexec",
-    "    set -l last_cmd (history --max=1)",
-    "",
-    '    if test -n "$last_cmd"',
-    '        tracker save "$last_cmd" >/dev/null 2>&1',
-    "    end",
-    "end",
-    "",
-].join("\n");
+  '',
+  '# cmd-tracker shell hook — auto saves every command you type',
+  'function __cmd_tracker_postexec --on-event fish_postexec',
+  '    set -l last_cmd (history --max=1)',
+  '',
+  '    if test -n "$last_cmd"',
+  '        tracker save "$last_cmd" >/dev/null 2>&1',
+  '    end',
+  'end',
+  '',
+].join('\n');
 
 
 /*
@@ -113,7 +113,7 @@ const FISH_HOOK_SCRIPT = [
  * → Check if hook already exists (avoid duplicates)
  * → Find and remove hook when user runs tracker unhook
  */
-const HOOK_MARKER = "# cmd-tracker shell hook — auto saves every command you type";
+const HOOK_MARKER = '# cmd-tracker shell hook — auto saves every command you type';
 
 /*
  * detectShell() — detects which shell user is running
@@ -128,28 +128,30 @@ const HOOK_MARKER = "# cmd-tracker shell hook — auto saves every command you t
  * @returns {string} — "bash", "zsh", "fish", or "unknown"
  */
 function detectShell() {
-    const shell = process.env.SHELL || "";
+  const shell = process.env.SHELL || '';
 
-    if (process.env.FISH_VERSION) return "fish";
+  if (process.env.FISH_VERSION) return 'fish';
 
-    if (shell.includes("fish")) return "fish";
+  if (shell.includes('fish')) return 'fish';
 
-    try {
-        const ppid = process.ppid;
-        const { execFileSync } = require("node:child_process");
-        const comm = execFileSync("/bin/ps", ["-o", "comm=", "-p", String(ppid)], { encoding: "utf-8" }).trim();
-        if (comm.includes("fish")) return "fish";
-        if (comm.includes("zsh")) return "zsh";
-        if (comm.includes("bash")) return "bash";
-    } catch (_) {}
+  try {
+    const ppid = process.ppid;
+    const { execFileSync } = require('node:child_process');
+    const comm = execFileSync('/bin/ps', ['-o', 'comm=', '-p', String(ppid)], { encoding: 'utf-8' }).trim();
+    if (comm.includes('fish')) return 'fish';
+    if (comm.includes('zsh')) return 'zsh';
+    if (comm.includes('bash')) return 'bash';
+  } catch {
+    // ignore ps command errors
+  }
 
-    if (shell.includes("zsh")) return "zsh";
-    if (shell.includes("bash")) return "bash";
+  if (shell.includes('zsh')) return 'zsh';
+  if (shell.includes('bash')) return 'bash';
 
-    const comspec = process.env.ComSpec || "";
-    if (comspec.includes("cmd.exe")) return "unknown";
+  const comspec = process.env.ComSpec || '';
+  if (comspec.includes('cmd.exe')) return 'unknown';
 
-    return "unknown";
+  return 'unknown';
 }
 
 /*
@@ -176,10 +178,10 @@ function installHook() {
      * If shell is unknown — we can't install hook
      * This happens on Windows CMD/PowerShell
      */
-    if (shell === "unknown") {
+    if (shell === 'unknown') {
       return {
         success: false,
-        message: "❌ Automatic hook not supported on Windows CMD/PowerShell\n💡 Use Git Bash or WSL for automatic capture"
+        message: '❌ Automatic hook not supported on Windows CMD/PowerShell\n💡 Use Git Bash or WSL for automatic capture'
       };
     }
 
@@ -190,7 +192,7 @@ function installHook() {
      * Look for our unique marker in the config file
      */
     if (fs.existsSync(configFile)) {
-      const content = fs.readFileSync(configFile, "utf-8");
+      const content = fs.readFileSync(configFile, 'utf-8');
 
       if (content.includes(HOOK_MARKER)) {
         return {
@@ -204,17 +206,17 @@ function installHook() {
      * Append hook script to shell config file
      * appendFileSync → adds to end without deleting existing content
      */
-        if (shell === "fish") {
-            fs.mkdirSync(path.dirname(configFile), { recursive: true });
-        }
+    if (shell === 'fish') {
+      fs.mkdirSync(path.dirname(configFile), { recursive: true });
+    }
 
-        /*
+    /*
          * Choose correct hook
          */
-        const hookScript =
-            shell === "fish" ? FISH_HOOK_SCRIPT : HOOK_SCRIPT;
+    const hookScript =
+            shell === 'fish' ? FISH_HOOK_SCRIPT : HOOK_SCRIPT;
 
-        fs.appendFileSync(configFile, hookScript);
+    fs.appendFileSync(configFile, hookScript);
 
     return {
       success: true,
@@ -225,10 +227,10 @@ function installHook() {
 
   } catch (error) {
 
-    if (error.code === "EACCES") {
+    if (error.code === 'EACCES') {
       return {
         success: false,
-        message: "❌ Permission denied! Try with sudo/admin permissions"
+        message: '❌ Permission denied! Try with sudo/admin permissions'
       };
     }
 
@@ -253,11 +255,11 @@ function removeHook() {
     if (!fs.existsSync(configFile)) {
       return {
         success: false,
-        message: "❌ Shell config file not found"
+        message: '❌ Shell config file not found'
       };
     }
 
-    const content = fs.readFileSync(configFile, "utf-8");
+    const content = fs.readFileSync(configFile, 'utf-8');
 
     /*
      * Check if hook exists
@@ -265,7 +267,7 @@ function removeHook() {
     if (!content.includes(HOOK_MARKER)) {
       return {
         success: false,
-        message: "⚠️  Hook not found in shell config"
+        message: '⚠️  Hook not found in shell config'
       };
     }
 
@@ -274,7 +276,7 @@ function removeHook() {
      * Split by marker → take everything before it
      * Then trim trailing whitespace
      */
-    const newContent = content.split(HOOK_MARKER)[0].trimEnd() + "\n";
+    const newContent = content.split(HOOK_MARKER)[0].trimEnd() + '\n';
     fs.writeFileSync(configFile, newContent);
 
     return {
@@ -303,7 +305,7 @@ function isHookInstalled() {
 
     if (!fs.existsSync(configFile)) return false;
 
-    const content = fs.readFileSync(configFile, "utf-8");
+    const content = fs.readFileSync(configFile, 'utf-8');
     return content.includes(HOOK_MARKER);
 
   } catch (error) {
