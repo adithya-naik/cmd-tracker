@@ -16,7 +16,7 @@ const {
   showInitError,
   isValidQuery
 } = require("../utils/validator");
-
+const colors = require("../utils/colors");
 /*
  * searchCommand() — main function
  *
@@ -37,8 +37,8 @@ function searchCommand(query) {
    * Validate query
    */
   if (!isValidQuery(query)) {
-    console.log("\n❌ Please provide a search query");
-    console.log("💡 Usage: tracker search \"git\"\n");
+    console.log(colors.error("\n❌ Please provide a search query"));
+    console.log(colors.info('💡 Usage: ') + colors.bold('tracker search "git"') + "\n");
     return;
   }
 
@@ -60,37 +60,37 @@ function searchCommand(query) {
     }
 
     if (results.length === 0) {
-      console.log(`\n🔍 No commands found for: "${query}"\n`);
+      console.log(colors.warning(`\n🔍 No commands found for: "${query}"\n`));
       return;
     }
 
-    console.log(`\n🔍 Search results for: "${query}"`);
-    console.log("─".repeat(50));
+    console.log(colors.heading(`\n🔍 Search results for: "${query}"`));
+    console.log(colors.dim("─".repeat(50)));
 
-  results.forEach((item, index) => {
+    results.forEach((item, index) => {
 
-    const date = new Date(item.time).toLocaleDateString();
+      const date = new Date(item.time).toLocaleDateString();
+      const categoryColor = colors.getCategoryColor(item.category);
+      /*
+       * Highlight the search term in results
+       * Replace matched part with uppercase version
+       * So user can easily spot what matched
+       */
+      const highlighted = item.command.replace(
+        new RegExp(searchTerm, "gi"),
+        (match) => colors.warning.bold(match)
+      );
 
-    /*
-     * Highlight the search term in results
-     * Replace matched part with uppercase version
-     * So user can easily spot what matched
-     */
-    const highlighted = item.command.replace(
-      new RegExp(searchTerm, "gi"),
-      (match) => `[${match.toUpperCase()}]`
-    );
+      console.log(`\n  ${colors.dim(index + 1 + ".")} ${highlighted}`);
+      console.log(`     📁 ${categoryColor(item.category)}  ${colors.dim("📅 " + date)}`);
+    });
 
-    console.log(`\n  ${index + 1}. ${highlighted}`);
-    console.log(`     📁 Category: ${item.category}  📅 ${date}`);
-  });
-
-    console.log("\n" + "─".repeat(50));
-    console.log(`✅ Found ${results.length} matching command(s)\n`);
+    console.log("\n" + colors.dim("─".repeat(50)));
+    console.log(colors.success(`✅ Found ${results.length} matching command(s)\n`));
 
   } catch (error) {
-    console.log("\n❌ Error searching commands");
-    console.log("💡 Try running tracker init again\n");
+    console.log(colors.error("\n❌ Error searching commands"));
+    console.log(colors.info("💡 Try running tracker init again\n"));
   }
 }
 
