@@ -12,7 +12,7 @@
 
 const fs = require("fs");
 const path = require("path");
-
+const colors = require("./colors");
 /*
  * Path to .tracker folder
  * process.cwd() → user's current project folder
@@ -40,8 +40,8 @@ function isInitialized() {
  * telling them exactly what to do next
  */
 function showInitError() {
-  console.log("\n❌ cmd-tracker is not initialized in this project!");
-  console.log("💡 Run this first: tracker init\n");
+  console.log(colors.error("\n❌ cmd-tracker is not initialized in this project!"));
+  console.log(colors.info("💡 Run this first: ") + colors.bold("tracker init") + "\n");
 }
 
 /*
@@ -80,8 +80,8 @@ function isValidCategory(category) {
  * @param {string} category — the invalid category user typed
  */
 function showCategoryError(category) {
-  console.log(`\n❌ Unknown category: "${category}"`);
-    console.log("📋 Valid categories: git, npm, docker, linux, node, angular, python, go, java, rust, dotnet, kubernetes, database, cloud, packageManagers, testing, ai, others\n");
+  console.log(colors.error(`\n❌ Unknown category: "${category}"`));
+  console.log(colors.info("📋 Valid categories: ") + colors.dim("git, npm, docker, linux, node, angular, python, go, java, rust, dotnet, kubernetes, database, cloud, packagemanagers, testing, ai, others") + "\n");
 }
 
 /*
