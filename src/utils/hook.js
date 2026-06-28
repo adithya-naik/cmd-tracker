@@ -28,7 +28,7 @@ const os = require('node:os');
  * Mac/Linux → /home/adithya
  */
 const HOME_DIR = os.homedir();
-
+const x = 10; 
 /*
  * Shell config file paths
  * These are standard locations for shell config files

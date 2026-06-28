@@ -9,7 +9,8 @@
   "scripts": {
     "test": "echo \"No tests yet\"",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
