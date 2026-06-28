@@ -3,18 +3,18 @@
  * Now with proper error handling using validator.js
  */
 
-const fs = require("fs");
-const path = require("path");
-const readline = require("readline");
-const { readCommands } = require("../utils/storage");
+const fs = require('fs');
+const path = require('path');
+const readline = require('readline');
+const { readCommands } = require('../utils/storage');
 const {
   isInitialized,
   showInitError,
   isValidCategory,
   showCategoryError
-} = require("../utils/validator");
+} = require('../utils/validator');
 
-const COMMANDS_FILE = path.join(process.cwd(), ".tracker", "commands.json");
+const COMMANDS_FILE = path.join(process.cwd(), '.tracker', 'commands.json');
 
 function ask(question) {
   const rl = readline.createInterface({
@@ -63,8 +63,8 @@ async function clearCommand(category) {
         `\n⚠️  Clear all ${data[cat].length} ${cat} commands? (yes/no): `
       );
 
-      if (answer.toLowerCase() !== "yes") {
-        console.log("❌ Cancelled\n");
+      if (answer.toLowerCase() !== 'yes') {
+        console.log('❌ Cancelled\n');
         return;
       }
 
@@ -79,7 +79,7 @@ async function clearCommand(category) {
     );
 
     if (total === 0) {
-      console.log("\n📭 No commands saved yet\n");
+      console.log('\n📭 No commands saved yet\n');
       return;
     }
 
@@ -87,8 +87,8 @@ async function clearCommand(category) {
       `\n⚠️  Clear ALL ${total} saved commands? This cannot be undone! (yes/no): `
     );
 
-    if (answer.toLowerCase() !== "yes") {
-      console.log("❌ Cancelled\n");
+    if (answer.toLowerCase() !== 'yes') {
+      console.log('❌ Cancelled\n');
       return;
     }
 
@@ -101,8 +101,8 @@ async function clearCommand(category) {
     console.log(`\n✅ Cleared all ${total} saved commands\n`);
 
   } catch (error) {
-    console.log("\n❌ Error clearing commands");
-    console.log("💡 Try running tracker init again\n");
+    console.log('\n❌ Error clearing commands');
+    console.log('💡 Try running tracker init again\n');
   }
 }
 
