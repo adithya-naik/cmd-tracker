@@ -6,6 +6,7 @@
  */
 
 const { readCommands } = require('../utils/storage');
+const colors = require('../utils/colors');
 const {
   isInitialized,
   showInitError,
@@ -46,8 +47,8 @@ function listCommand(category) {
     const data = readCommands();
     let totalCommands = 0;
 
-    console.log('\n📟 CMD-TRACKER — Your Command History\n');
-    console.log('─'.repeat(50));
+    console.log(colors.heading('\n📟 CMD-TRACKER — Your Command History\n'));
+    console.log(colors.dim('─'.repeat(50)));
 
     for (const [cat, commands] of Object.entries(data)) {
       if (commands.length === 0) continue;
@@ -63,7 +64,7 @@ function listCommand(category) {
     }
 
     console.log('─'.repeat(50));
-    console.log(`\n✅ Total: ${totalCommands} commands saved\n`);
+    console.log(colors.success(`\n✅ Total: ${totalCommands} commands saved\n`));
 
   } catch (error) {
     /*
@@ -75,6 +76,7 @@ function listCommand(category) {
   }
 }
 
+
 function displayCategory(categoryName, commands) {
 
   const icons = {
@@ -85,32 +87,33 @@ function displayCategory(categoryName, commands) {
     node:    '🟢',
     angular: '🔴',
     python:  '🐍',
-    go: '🔷',
-    java: '☕',
-    rust: '🦀',
-    dotnet: '🔷',
+    go:      '🔷',
+    java:    '☕',
+    rust:    '🦀',
+    dotnet:  '🔵',
     kubernetes: '☸️',
     database: '🗄️',
-    cloud: '☁️',
+    cloud:   '☁️',
     packagemanagers: '📥',
     testing: '🧪',
-    ai: '🤖',
-    others: '📌'
+    ai:      '🤖',
+    others:  '📌'
   };
 
   const icon = icons[categoryName] || '📌';
+  const categoryColor = colors.getCategoryColor(categoryName);
 
-  console.log(`\n${icon}  ${categoryName.toUpperCase()} (${commands.length})`);
-  console.log('─'.repeat(30));
+  console.log(`\n${icon}  ${categoryColor.bold(categoryName.toUpperCase())} ${colors.dim(`(${commands.length})`)}`);
+  console.log(colors.dim('─'.repeat(30)));
 
   if (commands.length === 0) {
-    console.log('  📭 No commands saved yet');
+    console.log(colors.dim('  📭 No commands saved yet'));
     return;
   }
 
   commands.forEach((item, index) => {
     const date = new Date(item.time).toLocaleDateString();
-    console.log(`  ${String(index + 1).padStart(2, ' ')}. ${item.command}  (${date})`);
+    console.log(`  ${colors.dim(String(index + 1).padStart(2, ' ') + '.')} ${item.command}  ${colors.dim(`(${date})`)}`);
   });
 }
 

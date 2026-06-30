@@ -13,6 +13,7 @@ const {
   isValidCategory,
   showCategoryError
 } = require('../utils/validator');
+const colors = require('../utils/colors');
 
 const COMMANDS_FILE = path.join(process.cwd(), '.tracker', 'commands.json');
 
@@ -55,22 +56,22 @@ async function clearCommand(category) {
       const cat = category.toLowerCase();
 
       if (data[cat].length === 0) {
-        console.log(`\n📭 No commands saved in ${cat}\n`);
+        console.log(colors.warning(`\n📭 No commands saved in ${cat}\n`));
         return;
       }
 
       const answer = await ask(
-        `\n⚠️  Clear all ${data[cat].length} ${cat} commands? (yes/no): `
+        colors.warning(`\n⚠️  Clear all ${data[cat].length} ${cat} commands? `) + colors.dim('(yes/no): ')
       );
 
       if (answer.toLowerCase() !== 'yes') {
-        console.log('❌ Cancelled\n');
+        console.log(colors.error('❌ Cancelled\n'));
         return;
       }
 
       data[cat] = [];
       fs.writeFileSync(COMMANDS_FILE, JSON.stringify(data, null, 2));
-      console.log(`\n✅ Cleared all ${cat} commands\n`);
+      console.log(colors.success(`\n✅ Cleared all ${cat} commands\n`));
       return;
     }
 
@@ -79,16 +80,15 @@ async function clearCommand(category) {
     );
 
     if (total === 0) {
-      console.log('\n📭 No commands saved yet\n');
+      console.log(colors.warning('\n📭 No commands saved yet\n'));
       return;
     }
 
     const answer = await ask(
-      `\n⚠️  Clear ALL ${total} saved commands? This cannot be undone! (yes/no): `
+      colors.warning(`\n⚠️  Clear ALL ${total} saved commands? This cannot be undone! `) + colors.dim('(yes/no): ')
     );
-
     if (answer.toLowerCase() !== 'yes') {
-      console.log('❌ Cancelled\n');
+      console.log(colors.error('❌ Cancelled\n'));
       return;
     }
 
@@ -98,11 +98,11 @@ async function clearCommand(category) {
     };
 
     fs.writeFileSync(COMMANDS_FILE, JSON.stringify(emptyData, null, 2));
-    console.log(`\n✅ Cleared all ${total} saved commands\n`);
+    console.log(colors.success(`\n✅ Cleared all ${total} saved commands\n`));
 
   } catch (error) {
-    console.log('\n❌ Error clearing commands');
-    console.log('💡 Try running tracker init again\n');
+    console.log(colors.error('\n❌ Error clearing commands'));
+    console.log(colors.info('💡 Try running tracker init again\n'));
   }
 }
 
