@@ -11,14 +11,14 @@
  *        Mac/Linux: /home/user/project/.tracker/commands.json
  *        path module handles this difference automatically
  */
-const fs = require("fs");
-const path = require("path");
+const fs = require('fs');
+const path = require('path');
 
 /*
  * Import our categorize function from categorizer.js
  * We need it here to know WHICH category to save the command in
  */
-const { categorize } = require("./categorizer");
+const { categorize } = require('./categorizer');
 
 /*
  * process.cwd() → Current Working Directory
@@ -31,13 +31,13 @@ const { categorize } = require("./categorizer");
  * This is VERY important — we want to save commands in THEIR repo
  * not in our package folder
  */
-const TRACKER_DIR = path.join(process.cwd(), ".tracker");
+const TRACKER_DIR = path.join(process.cwd(), '.tracker');
 
 /*
  * This is where all commands will be saved
  * .tracker/commands.json inside the user's repo
  */
-const COMMANDS_FILE = path.join(TRACKER_DIR, "commands.json");
+const COMMANDS_FILE = path.join(TRACKER_DIR, 'commands.json');
 
 /*
  * This is our default empty structure
@@ -63,7 +63,7 @@ function getDefaultStructure() {
     kubernetes: [],
     database: [],
     cloud: [],
-        packagemanagers: [],
+    packagemanagers: [],
     testing: [],
     ai: [],
     others: [],
@@ -92,7 +92,7 @@ function initStorage() {
      * Like "mkdir -p" in linux
      */
     fs.mkdirSync(TRACKER_DIR, { recursive: true });
-    console.log("✅ Created .tracker folder");
+    console.log('✅ Created .tracker folder');
   }
 
   /*
@@ -109,7 +109,7 @@ function initStorage() {
       COMMANDS_FILE,
       JSON.stringify(getDefaultStructure(), null, 2)
     );
-    console.log("✅ Created .tracker/commands.json");
+    console.log('✅ Created .tracker/commands.json');
   }
 }
 
@@ -132,7 +132,7 @@ function readCommands() {
    * fs.readFileSync() → reads the file content as text
    * JSON.parse() → converts JSON text back to JavaScript object
    */
-  const fileContent = fs.readFileSync(COMMANDS_FILE, "utf-8");
+  const fileContent = fs.readFileSync(COMMANDS_FILE, 'utf-8');
   const parsed = JSON.parse(fileContent);
   return { ...getDefaultStructure(), ...parsed };
 }
@@ -149,7 +149,7 @@ function saveCommand(command) {
    * Safety check — don't save empty commands
    */
   if (!command || !command.trim()) {
-    return { saved: false, reason: "empty command" };
+    return { saved: false, reason: 'empty command' };
   }
 
   /*
@@ -183,7 +183,7 @@ function saveCommand(command) {
   );
 
   if (isDuplicate) {
-    return { saved: false, reason: "duplicate", category };
+    return { saved: false, reason: 'duplicate', category };
   }
 
   /*
@@ -218,7 +218,7 @@ function saveCommand(command) {
 function toggleFavorite(command) {
 
   if (!command || !command.trim()) {
-    return { success: false, reason: "empty command" };
+    return { success: false, reason: 'empty command' };
   }
 
   const cleanCommand = command.trim();
@@ -245,14 +245,14 @@ function toggleFavorite(command) {
 
       return {
         success: true,
-        action: currentFav ? "removed" : "added",
+        action: currentFav ? 'removed' : 'added',
         command: cleanCommand,
         category
       };
     }
   }
 
-  return { success: false, reason: "command not found" };
+  return { success: false, reason: 'command not found' };
 }
 
 /*

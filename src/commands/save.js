@@ -13,9 +13,9 @@
  * We NEVER want it to interrupt user's workflow
  */
 
-const { saveCommand } = require("../utils/storage");
-const colors = require("../utils/colors");
-const { isInitialized } = require("../utils/validator");
+const { saveCommand } = require('../utils/storage');
+const colors = require('../utils/colors');
+const { isInitialized } = require('../utils/validator');
 
 function saveCommandAction(command) {
 
@@ -49,8 +49,8 @@ function saveCommandAction(command) {
      */
     if (result.saved) {
       const categoryColor = colors.getCategoryColor(result.category);
-       console.log(
-        `${colors.success("✅ Saved")} [${categoryColor(result.category)}]: ${command}`
+      console.log(
+        `${colors.success('✅ Saved')} [${categoryColor(result.category)}]: ${command}`
       );
     }
 

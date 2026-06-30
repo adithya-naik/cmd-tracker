@@ -12,9 +12,9 @@ const {
   removeHook,
   isHookInstalled,
   detectShell
-} = require("../utils/hook");
+} = require('../utils/hook');
 
-const { isInitialized, showInitError } = require("../utils/validator");
+const { isInitialized, showInitError } = require('../utils/validator');
 
 /*
  * hookCommand() — runs when user types: tracker hook
@@ -30,7 +30,7 @@ function hookCommand() {
     return;
   }
 
-  console.log("\n🪄 Setting up automatic command capture...\n");
+  console.log('\n🪄 Setting up automatic command capture...\n');
 
   /*
    * Show which shell was detected
@@ -42,9 +42,9 @@ function hookCommand() {
    * Check if already installed
    */
   if (isHookInstalled()) {
-    console.log("\n⚠️  Shell hook is already installed!");
-    console.log("💡 Your commands are already being captured automatically");
-    console.log("💡 Run: tracker unhook to disable\n");
+    console.log('\n⚠️  Shell hook is already installed!');
+    console.log('💡 Your commands are already being captured automatically');
+    console.log('💡 Run: tracker unhook to disable\n');
     return;
   }
 
@@ -52,22 +52,22 @@ function hookCommand() {
    * Install the hook
    */
   const result = installHook();
-  console.log("\n" + result.message);
+  console.log('\n' + result.message);
 
   if (result.success) {
-    console.log("\n🎯 Almost done! Run this command to activate:");
+    console.log('\n🎯 Almost done! Run this command to activate:');
     /*
      * Always show Unix style path for source command
      * Even on Windows — Git Bash uses Unix paths
      * ~/.bashrc works on all systems
      */
-     const sourceCmd = {
-        zsh: "~/.zshrc",
-        bash: "~/.bashrc",
-        fish: "~/.config/fish/config.fish",
-        }[result.shell];
+    const sourceCmd = {
+      zsh: '~/.zshrc',
+      bash: '~/.bashrc',
+      fish: '~/.config/fish/config.fish',
+    }[result.shell];
     console.log(`\n   source ${sourceCmd}\n`);
-    console.log("After that — every command you type will be saved automatically! 🚀\n");
+    console.log('After that — every command you type will be saved automatically! 🚀\n');
   }
 }
 
@@ -77,22 +77,22 @@ function hookCommand() {
  */
 function unhookCommand() {
 
-  console.log("\n🔌 Removing automatic command capture...\n");
+  console.log('\n🔌 Removing automatic command capture...\n');
 
   const result = removeHook();
   console.log(result.message);
 
-    if (result.success) {
-        console.log("\n🎯 Almost done! Run this to apply changes:");
-        const shell = result.shell || detectShell();
-        const sourceCmd = {
-            zsh: "~/.zshrc",
-            bash: "~/.bashrc",
-            fish: "~/.config/fish/config.fish",
-        }[shell];
-        console.log(`\n   source ${sourceCmd}\n`);
-        console.log("After that — automatic capture will be disabled\n");
-    }
+  if (result.success) {
+    console.log('\n🎯 Almost done! Run this to apply changes:');
+    const shell = result.shell || detectShell();
+    const sourceCmd = {
+      zsh: '~/.zshrc',
+      bash: '~/.bashrc',
+      fish: '~/.config/fish/config.fish',
+    }[shell];
+    console.log(`\n   source ${sourceCmd}\n`);
+    console.log('After that — automatic capture will be disabled\n');
+  }
 }
 
 module.exports = { hookCommand, unhookCommand };

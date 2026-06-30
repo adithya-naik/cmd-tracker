@@ -10,15 +10,15 @@
  * Write once, use everywhere ✅
  */
 
-const fs = require("fs");
-const path = require("path");
-const colors = require("./colors");
+const fs = require('fs');
+const path = require('path');
+const colors = require('./colors');
 /*
  * Path to .tracker folder
  * process.cwd() → user's current project folder
  */
-const TRACKER_DIR = path.join(process.cwd(), ".tracker");
-const COMMANDS_FILE = path.join(TRACKER_DIR, "commands.json");
+const TRACKER_DIR = path.join(process.cwd(), '.tracker');
+const COMMANDS_FILE = path.join(TRACKER_DIR, 'commands.json');
 
 /*
  * isInitialized() — checks if tracker init was run
@@ -40,8 +40,8 @@ function isInitialized() {
  * telling them exactly what to do next
  */
 function showInitError() {
-  console.log(colors.error("\n❌ cmd-tracker is not initialized in this project!"));
-  console.log(colors.info("💡 Run this first: ") + colors.bold("tracker init") + "\n");
+  console.log(colors.error('\n❌ cmd-tracker is not initialized in this project!'));
+  console.log(colors.info('💡 Run this first: ') + colors.bold('tracker init') + '\n');
 }
 
 /*
@@ -51,26 +51,26 @@ function showInitError() {
  * @returns {boolean} — true if valid, false if not
  */
 function isValidCategory(category) {
-    const validCategories = [
-        "git",
-        "npm",
-        "docker",
-        "linux",
-        "node",
-        "angular",
-        "python",
-        "go",
-        "java",
-        "rust",
-        "dotnet",
-        "kubernetes",
-        "database",
-        "cloud",
-        "packagemanagers",
-        "testing",
-        "ai",
-        "others"
-    ];
+  const validCategories = [
+    'git',
+    'npm',
+    'docker',
+    'linux',
+    'node',
+    'angular',
+    'python',
+    'go',
+    'java',
+    'rust',
+    'dotnet',
+    'kubernetes',
+    'database',
+    'cloud',
+    'packagemanagers',
+    'testing',
+    'ai',
+    'others'
+  ];
   return validCategories.includes(category.toLowerCase());
 }
 
@@ -81,7 +81,7 @@ function isValidCategory(category) {
  */
 function showCategoryError(category) {
   console.log(colors.error(`\n❌ Unknown category: "${category}"`));
-  console.log(colors.info("📋 Valid categories: ") + colors.dim("git, npm, docker, linux, node, angular, python, go, java, rust, dotnet, kubernetes, database, cloud, packagemanagers, testing, ai, others") + "\n");
+  console.log(colors.info('📋 Valid categories: ') + colors.dim('git, npm, docker, linux, node, angular, python, go, java, rust, dotnet, kubernetes, database, cloud, packagemanagers, testing, ai, others') + '\n');
 }
 
 /*

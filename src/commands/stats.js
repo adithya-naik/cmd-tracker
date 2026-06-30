@@ -10,9 +10,9 @@
  * → Most used category
  */
 
-const { readCommands } = require("../utils/storage");
-const { isInitialized, showInitError } = require("../utils/validator");
-const colors = require("../utils/colors");
+const { readCommands } = require('../utils/storage');
+const { isInitialized, showInitError } = require('../utils/validator');
+const colors = require('../utils/colors');
 function statsCommand() {
 
   if (!isInitialized()) {
@@ -23,7 +23,7 @@ function statsCommand() {
   try {
     const data = readCommands();
 
-  /*
+    /*
    * Calculate total commands across all categories
    * Object.values() → gets all arrays from data object
    * .reduce() → adds up all lengths
@@ -33,100 +33,100 @@ function statsCommand() {
    * → values → [[1,2], [1]]
    * → reduce → 2 + 1 = 3
    */
-  const total = Object.values(data).reduce(
-    (sum, commands) => sum + commands.length, 0
-  );
+    const total = Object.values(data).reduce(
+      (sum, commands) => sum + commands.length, 0
+    );
 
     if (total === 0) {
-      console.log(colors.warning("\n📭 No commands saved yet!"));
-      console.log(colors.info("💡 Use: ") + colors.bold('tracker save "your command"') + "\n");
+      console.log(colors.warning('\n📭 No commands saved yet!'));
+      console.log(colors.info('💡 Use: ') + colors.bold('tracker save "your command"') + '\n');
       return;
     }
 
-    console.log(colors.heading("\n📊 CMD-TRACKER — Statistics\n"));
-    console.log(colors.dim("─".repeat(50)));
+    console.log(colors.heading('\n📊 CMD-TRACKER — Statistics\n'));
+    console.log(colors.dim('─'.repeat(50)));
 
-  /*
+    /*
    * Category icons — same as list.js for consistency
    */
-  const icons = {
-    git:     "🔀",
-    npm:     "📦",
-    docker:  "🐳",
-    linux:   "🐧",
-    node:    "🟢",
-    angular: "🔴",
-    python:  "🐍",
-    go: "🔷",
-    java: "☕",
-    rust: "🦀",
-    dotnet: "🔷",
-    kubernetes: "☸️",
-    database: "🗄️",
-    cloud: "☁️",
-    packageManagers: "📥",
-    testing: "🧪",
-    ai: "🤖",
-    others: "📌"
-  };
+    const icons = {
+      git:     '🔀',
+      npm:     '📦',
+      docker:  '🐳',
+      linux:   '🐧',
+      node:    '🟢',
+      angular: '🔴',
+      python:  '🐍',
+      go: '🔷',
+      java: '☕',
+      rust: '🦀',
+      dotnet: '🔷',
+      kubernetes: '☸️',
+      database: '🗄️',
+      cloud: '☁️',
+      packageManagers: '📥',
+      testing: '🧪',
+      ai: '🤖',
+      others: '📌'
+    };
 
-  /*
+    /*
    * Track which category has most commands
    */
-  let topCategory = "";
-  let topCount = 0;
+    let topCategory = '';
+    let topCount = 0;
 
-  /*
+    /*
    * Loop through each category and show stats
    */
-  for (const [category, commands] of Object.entries(data)) {
+    for (const [category, commands] of Object.entries(data)) {
 
-    /*
+      /*
      * Skip empty categories
      */
-    if (commands.length === 0) continue;
+      if (commands.length === 0) continue;
 
-    /*
+      /*
      * Calculate percentage
      * Math.round() → rounds to nearest whole number
      * 2.7 → 3, 2.3 → 2
      */
-    const percentage = Math.round((commands.length / total) * 100);
+      const percentage = Math.round((commands.length / total) * 100);
 
-    /*
+      /*
      * Build a simple visual bar
      * "█".repeat(percentage/5) → each block = 5%
      * So 50% → 10 blocks, 100% → 20 blocks
      */
-    const bar = "█".repeat(Math.round(percentage / 5));
+      const bar = '█'.repeat(Math.round(percentage / 5));
 
-    const icon = icons[category] || "📌";
+      const icon = icons[category] || '📌';
 
-     const categoryColor = colors.getCategoryColor(category);
+      const categoryColor = colors.getCategoryColor(category);
 
-    console.log(
+      console.log(
         `\n${icon}  ${categoryColor.bold(category.toUpperCase().padEnd(15))} ` +
-        `${colors.dim(String(commands.length).padStart(3) + " commands")}  ` +
-        `${colors.dim(String(percentage).padStart(3) + "%")}  ${categoryColor(bar)}`
+        `${colors.dim(String(commands.length).padStart(3) + ' commands')}  ` +
+        `${colors.dim(String(percentage).padStart(3) + '%')}  ${categoryColor(bar)}`
       );
 
-    /*
+      /*
      * Track top category
      */
-    if (commands.length > topCount) {
-      topCount = commands.length;
-      topCategory = category;
+      if (commands.length > topCount) {
+        topCount = commands.length;
+        topCategory = category;
+      }
     }
-  }
 
-    console.log("\n" + colors.dim("─".repeat(50)));
-    console.log(colors.info("📦 Total commands : ") + colors.bold(total));
-    console.log(colors.info("🏆 Most used      : ") + colors.bold(`${topCategory} (${topCount} commands)`) + "\n");
+    console.log('\n' + colors.dim('─'.repeat(50)));
+    console.log(colors.info('📦 Total commands : ') + colors.bold(total));
+    console.log(colors.info('🏆 Most used      : ') + colors.bold(`${topCategory} (${topCount} commands)`) + '\n');
 
 
   } catch (error) {
-     console.log(colors.error("\n❌ Error reading statistics"));
-    console.log(colors.info("💡 Try running tracker init again\n"));
+    console.log(colors.error('\n❌ Error reading statistics'));
+    console.log(colors.info('💡 Try running tracker init again\n'));
   }
 }
 

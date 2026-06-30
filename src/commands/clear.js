@@ -3,19 +3,19 @@
  * Now with proper error handling using validator.js
  */
 
-const fs = require("fs");
-const path = require("path");
-const readline = require("readline");
-const { readCommands } = require("../utils/storage");
+const fs = require('fs');
+const path = require('path');
+const readline = require('readline');
+const { readCommands } = require('../utils/storage');
 const {
   isInitialized,
   showInitError,
   isValidCategory,
   showCategoryError
-} = require("../utils/validator");
-const colors = require("../utils/colors");
+} = require('../utils/validator');
+const colors = require('../utils/colors');
 
-const COMMANDS_FILE = path.join(process.cwd(), ".tracker", "commands.json");
+const COMMANDS_FILE = path.join(process.cwd(), '.tracker', 'commands.json');
 
 function ask(question) {
   const rl = readline.createInterface({
@@ -61,11 +61,11 @@ async function clearCommand(category) {
       }
 
       const answer = await ask(
-        colors.warning(`\n⚠️  Clear all ${data[cat].length} ${cat} commands? `) + colors.dim("(yes/no): ")
+        colors.warning(`\n⚠️  Clear all ${data[cat].length} ${cat} commands? `) + colors.dim('(yes/no): ')
       );
 
-      if (answer.toLowerCase() !== "yes") {
-        console.log(colors.error("❌ Cancelled\n"));
+      if (answer.toLowerCase() !== 'yes') {
+        console.log(colors.error('❌ Cancelled\n'));
         return;
       }
 
@@ -80,15 +80,15 @@ async function clearCommand(category) {
     );
 
     if (total === 0) {
-      console.log(colors.warning("\n📭 No commands saved yet\n"));
+      console.log(colors.warning('\n📭 No commands saved yet\n'));
       return;
     }
 
     const answer = await ask(
-      colors.warning(`\n⚠️  Clear ALL ${total} saved commands? This cannot be undone! `) + colors.dim("(yes/no): ")
+      colors.warning(`\n⚠️  Clear ALL ${total} saved commands? This cannot be undone! `) + colors.dim('(yes/no): ')
     );
-    if (answer.toLowerCase() !== "yes") {
-      console.log(colors.error("❌ Cancelled\n"));
+    if (answer.toLowerCase() !== 'yes') {
+      console.log(colors.error('❌ Cancelled\n'));
       return;
     }
 
@@ -101,8 +101,8 @@ async function clearCommand(category) {
     console.log(colors.success(`\n✅ Cleared all ${total} saved commands\n`));
 
   } catch (error) {
-    console.log(colors.error("\n❌ Error clearing commands"));
-    console.log(colors.info("💡 Try running tracker init again\n"));
+    console.log(colors.error('\n❌ Error clearing commands'));
+    console.log(colors.info('💡 Try running tracker init again\n'));
   }
 }
 

@@ -10,13 +10,13 @@
  * Returns matching commands with their category
  */
 
-const { readCommands } = require("../utils/storage");
+const { readCommands } = require('../utils/storage');
 const {
   isInitialized,
   showInitError,
   isValidQuery
-} = require("../utils/validator");
-const colors = require("../utils/colors");
+} = require('../utils/validator');
+const colors = require('../utils/colors');
 /*
  * searchCommand() — main function
  *
@@ -37,8 +37,8 @@ function searchCommand(query) {
    * Validate query
    */
   if (!isValidQuery(query)) {
-    console.log(colors.error("\n❌ Please provide a search query"));
-    console.log(colors.info('💡 Usage: ') + colors.bold('tracker search "git"') + "\n");
+    console.log(colors.error('\n❌ Please provide a search query'));
+    console.log(colors.info('💡 Usage: ') + colors.bold('tracker search "git"') + '\n');
     return;
   }
 
@@ -65,7 +65,7 @@ function searchCommand(query) {
     }
 
     console.log(colors.heading(`\n🔍 Search results for: "${query}"`));
-    console.log(colors.dim("─".repeat(50)));
+    console.log(colors.dim('─'.repeat(50)));
 
     results.forEach((item, index) => {
 
@@ -77,20 +77,20 @@ function searchCommand(query) {
        * So user can easily spot what matched
        */
       const highlighted = item.command.replace(
-        new RegExp(searchTerm, "gi"),
+        new RegExp(searchTerm, 'gi'),
         (match) => colors.warning.bold(match)
       );
 
-      console.log(`\n  ${colors.dim(index + 1 + ".")} ${highlighted}`);
-      console.log(`     📁 ${categoryColor(item.category)}  ${colors.dim("📅 " + date)}`);
+      console.log(`\n  ${colors.dim(index + 1 + '.')} ${highlighted}`);
+      console.log(`     📁 ${categoryColor(item.category)}  ${colors.dim('📅 ' + date)}`);
     });
 
-    console.log("\n" + colors.dim("─".repeat(50)));
+    console.log('\n' + colors.dim('─'.repeat(50)));
     console.log(colors.success(`✅ Found ${results.length} matching command(s)\n`));
 
   } catch (error) {
-    console.log(colors.error("\n❌ Error searching commands"));
-    console.log(colors.info("💡 Try running tracker init again\n"));
+    console.log(colors.error('\n❌ Error searching commands'));
+    console.log(colors.info('💡 Try running tracker init again\n'));
   }
 }
 

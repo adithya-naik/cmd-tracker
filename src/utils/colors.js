@@ -10,14 +10,14 @@
  * → Keep colors consistent across all commands
  */
 
-const chalk = require("chalk");
+const chalk = require('chalk');
 
 /*
  * Category colors — each category gets a distinct color
  * matching its icon for visual consistency
  */
 const categoryColors = {
-  git: chalk.hex("#f05033"),
+  git: chalk.hex('#f05033'),
   npm: chalk.red,
   docker: chalk.cyan,
   linux: chalk.green,
@@ -25,8 +25,8 @@ const categoryColors = {
   angular: chalk.red,
   python: chalk.yellow,
   go: chalk.cyan,
-  java: chalk.hex("#f89820"),
-  rust: chalk.hex("#dea584"),
+  java: chalk.hex('#f89820'),
+  rust: chalk.hex('#dea584'),
   dotnet: chalk.magenta,
   kubernetes: chalk.blue,
   database: chalk.yellow,
