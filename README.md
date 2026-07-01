@@ -2,7 +2,7 @@
 
 # 📟 cmd-tracker
 
-### A developer tool that auto-captures, categorizes and saves terminal commands per project for easy revision
+### A developer tool that categorizes and saves terminal commands per project for easy revision
 
 [![npm version](https://img.shields.io/npm/v/@adithya-naik/cmd-tracker.svg)](https://www.npmjs.com/package/@adithya-naik/cmd-tracker)
 [![npm downloads](https://img.shields.io/npm/dm/@adithya-naik/cmd-tracker.svg)](https://www.npmjs.com/package/@adithya-naik/cmd-tracker)
@@ -18,7 +18,7 @@
 
 ## 🎯 What is cmd-tracker?
 
-**cmd-tracker** is an npm package that automatically captures, categorizes and saves every terminal command you type in a project.
+**cmd-tracker** is an npm package that helps you save, categorize, and organize terminal commands per project for easy revision.
 
 Perfect for:
 - 🎓 **Students** learning Linux, Git, Docker, Angular etc.
@@ -28,13 +28,13 @@ Perfect for:
 ### How it works
 
 ```
-You work normally in terminal
+Initialize tracker in your project
          ↓
-Commands auto-captured in background
+Save commands with tracker save
          ↓
-Saved to .tracker/commands.json in your project
+Commands are stored in .tracker/commands.json
          ↓
-Run tracker list → see entire command history
+Run tracker list to review your command history
 ```
 
 ---
@@ -52,24 +52,17 @@ npm install @adithya-naik/cmd-tracker
 ## 🚀 Quick Start
 
 **Step 1 — Initialize in your repo:**
+
 ```bash
 npx tracker init
 ```
 
-**Step 2 — Enable automatic capture:**
-```bash
-npx tracker hook
-source ~/.bashrc                # bash
-source ~/.zshrc                 # zsh (Mac)
-source ~/.config/fish/config.fish  # fish
-```
+**Step 2 — Save and review commands:**
 
-**Step 3 — Work normally! Then revise:**
 ```bash
+npx tracker save "git status"
 npx tracker list
 ```
-
-That's it! Every command you type is now saved automatically 🪄
 
 ---
 
@@ -78,8 +71,6 @@ That's it! Every command you type is now saved automatically 🪄
 | Command | Description |
 |---|---|
 | `tracker init` | Initialize tracker in your project |
-| `tracker hook` | Enable automatic command capture |
-| `tracker unhook` | Disable automatic command capture |
 | `tracker list` | Show all saved commands |
 | `tracker list <category>` | Filter by category |
 | `tracker search <query>` | Search through commands |
@@ -176,8 +167,7 @@ your-project/
 | Windows (PowerShell) | ⚠️ Manual save only |
 | Fish | ✅ Full support |
 
-> Windows CMD/PowerShell users: use `tracker save "command"` manually
-> or use Git Bash / WSL for automatic capture
+> Windows CMD/PowerShell users can use `tracker save "command"` to save commands manually.
 
 ---
 
@@ -200,20 +190,11 @@ sudo apt install fish
 sudo dnf install fish
 ```
 
+
 **Windows (WSL):**
 ```bash
 sudo apt install fish
 ```
-
-### Setup tracker in Fish
-
-```bash
-npx tracker init
-npx tracker hook
-source ~/.config/fish/config.fish
-```
-
-That's it! Every command you type in fish will now be saved automatically! 🎉
 
 ---
 
