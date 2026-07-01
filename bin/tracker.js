@@ -9,7 +9,7 @@
 
 /*Current commands:
  * tracker init        → sets up .tracker folder in user's repo
- * tracker save <cmd>  → saves a command (called by shell hook)
+ * tracker save <cmd> → saves a command
  *
  * Coming soon:
  * tracker list   → show all saved commands
@@ -37,10 +37,10 @@ const packageJson = require('../package.json');
 const { initCommand } = require('../src/commands/init');
 
 /*
- * Import our save command function
- * This runs automatically via shell hook every time
- * user types a command in terminal
+ * Import our save command function.
+ * Used to store commands in the tracker.
  */
+
 const { saveCommandAction } = require('../src/commands/save');
 // Import list command function
 const { listCommand } = require('../src/commands/list');
@@ -49,7 +49,6 @@ const { searchCommand } = require('../src/commands/search');
 const { statsCommand } = require('../src/commands/stats');
 const { clearCommand } = require('../src/commands/clear');
 const { exportCommand } = require('../src/commands/export');
-const { hookCommand, unhookCommand } = require('../src/commands/hook');
 const { favoriteCommand, favoritesCommand } = require('../src/commands/favorite');
 /*
  * .name() → sets the name of our CLI tool
@@ -118,8 +117,7 @@ program
 /*
 * Register the SAVE command
 *
-* This command is special — users never type it manually
-* It gets called automatically by the shell hook
+* Internal command used to store commands.
 *
 * .argument("<command>") → accepts everything after "tracker save"
 * as a single string argument
@@ -133,7 +131,7 @@ program
 */
 program
   .command('save')
-  .description('Save a command to tracker (called automatically by shell hook)')
+  .description('Save a command to tracker')
   .argument('<command>', 'the terminal command to save')
   .action((command) => {
     saveCommandAction(command);
@@ -212,29 +210,6 @@ program
   .action((options) => {
     exportCommand(options);
   });
-
-/*
-* HOOK command
-* tracker hook → installs shell hook for auto capture
-*/
-program
-  .command('hook')
-  .description('Enable automatic command capture via shell hook')
-  .action(() => {
-    hookCommand();
-  });
-
-/*
- * UNHOOK command
- * tracker unhook → removes shell hook
- */
-program
-  .command('unhook')
-  .description('Disable automatic command capture')
-  .action(() => {
-    unhookCommand();
-  });
-
 
 /*
 * FAVORITE command
