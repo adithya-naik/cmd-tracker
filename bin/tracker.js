@@ -60,7 +60,8 @@ program.name('tracker');
  * .description() → explains what our tool does
  * This also shows up in: tracker --help
  */
-program.description('📟 A developer tool that auto-captures, categorizes and saves terminal commands per project for easy revision');
+program.description(
+  '📟 A developer tool that categorizes and saves terminal commands per project for easy revision');
 
 /*
  * .version() → sets the version of our CLI tool

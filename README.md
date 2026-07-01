@@ -2,7 +2,7 @@
 
 # 📟 cmd-tracker
 
-### A developer tool that categorizes and saves terminal commands per project for easy revision
+## A developer tool that categorizes and saves terminal commands per project for easy revision
 
 [![npm version](https://img.shields.io/npm/v/@adithya-naik/cmd-tracker.svg)](https://www.npmjs.com/package/@adithya-naik/cmd-tracker)
 [![npm downloads](https://img.shields.io/npm/dm/@adithya-naik/cmd-tracker.svg)](https://www.npmjs.com/package/@adithya-naik/cmd-tracker)
@@ -165,7 +165,7 @@ your-project/
 | Linux (bash) | ✅ Full support |
 | Windows (Git Bash) | ✅ Supported |
 | Windows (PowerShell) | ⚠️ Manual save only |
-| Fish | ✅ Full support |
+| Fish | ⚠️ Manual save only |
 
 > Windows CMD/PowerShell users can use `tracker save "command"` to save commands manually.
 
