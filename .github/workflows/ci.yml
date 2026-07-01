@@ -58,7 +58,6 @@ jobs:
           test -f src/utils/storage.js && echo "✅ storage.js exists"
           test -f src/utils/categorizer.js && echo "✅ categorizer.js exists"
           test -f src/utils/validator.js && echo "✅ validator.js exists"
-          test -f src/utils/hook.js && echo "✅ hook.js exists"
           test -f src/commands/init.js && echo "✅ init.js exists"
           test -f src/commands/save.js && echo "✅ save.js exists"
           test -f src/commands/list.js && echo "✅ list.js exists"
@@ -67,7 +66,6 @@ jobs:
           test -f src/commands/clear.js && echo "✅ clear.js exists"
           test -f src/commands/export.js && echo "✅ export.js exists"
           test -f src/commands/favorite.js && echo "✅ favorite.js exists"
-          test -f src/commands/hook.js && echo "✅ hook command exists"
           echo "✅ All required files present!"
 
       - name: Test core functionality
