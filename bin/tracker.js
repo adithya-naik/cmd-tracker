@@ -51,6 +51,7 @@ const { clearCommand } = require('../src/commands/clear');
 const { exportCommand } = require('../src/commands/export');
 const { hookCommand, unhookCommand } = require('../src/commands/hook');
 const { favoriteCommand, favoritesCommand } = require('../src/commands/favorite');
+const { importCommand } = require('../src/commands/import');
 /*
  * .name() → sets the name of our CLI tool
  * This shows up when user types: tracker --help
@@ -257,6 +258,17 @@ program
   .description('List all favorited commands')
   .action(() => {
     favoritesCommand();
+  });
+
+/*
+ * IMPORT command
+ * tracker import → reads your shell history and saves new commands
+ */
+program
+  .command('import')
+  .description('Import commands from your shell history file')
+  .action(() => {
+    importCommand();
   });
 /*
  * This line is VERY important
